@@ -117,6 +117,13 @@ export interface Translations {
   excelSummarySheet: string;
   excelAttendanceCount: string;
   excelFullYearFile: string;
+  back: string; 
+  scanHubDescription: string;
+  professionalScanner: string;
+  professionalScannerDescription: string;
+  cameraScan: string;
+  cameraScanDescription: string;
+
 
 };
 
@@ -239,6 +246,12 @@ const ko: Translations = {
   excelSummarySheet: "연간집계",
   excelAttendanceCount: "출석 횟수",
   excelFullYearFile: "연간출석전체.xlsx",
+  back: '돌아가기',
+  scanHubDescription: '출석 스캔 방식을 선택하세요',
+  professionalScanner: '전문 스캐너',
+  professionalScannerDescription: '바코드/QR 스캐너가 키보드처럼 값을 입력하는 방식입니다.',
+  cameraScan: '카메라 스캔',
+  cameraScanDescription: '태블릿이나 휴대폰 카메라로 QR을 비춰 출석 처리합니다.',
   
 };
 
@@ -361,6 +374,12 @@ const en: Translations = {
   excelSummarySheet: "Year Summary",
   excelAttendanceCount: "Attendance Count",
   excelFullYearFile: "full-year-attendance.xlsx",
+  back: 'Back',
+  scanHubDescription: 'Choose an attendance scanning method',
+  professionalScanner: 'Professional Scanner',
+  professionalScannerDescription: 'Use a barcode/QR scanner that inputs values like a keyboard.',
+  cameraScan: 'Camera Scan',
+  cameraScanDescription: 'Use a tablet or phone camera to scan the QR code for attendance.',
 
 };
 

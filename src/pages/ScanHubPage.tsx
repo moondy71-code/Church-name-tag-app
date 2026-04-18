@@ -16,7 +16,7 @@ export default function ScanHubPage() {
       <div className="space-y-4">
         <Button variant="outline" onClick={() => setMode('menu')} className="gap-2">
           <ArrowLeft className="w-4 h-4" />
-          돌아가기
+          {i.back}
         </Button>
         <ScannerInputPage />
       </div>
@@ -28,7 +28,7 @@ export default function ScanHubPage() {
       <div className="space-y-4">
         <Button variant="outline" onClick={() => setMode('menu')} className="gap-2">
           <ArrowLeft className="w-4 h-4" />
-          돌아가기
+          {i.back}
         </Button>
         <ScanPage />
       </div>
@@ -40,7 +40,7 @@ export default function ScanHubPage() {
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-bold">{i.scanTitle}</h1>
         <p className="text-sm text-muted-foreground">
-          출석 스캔 방식을 선택하세요
+          {i.scanHubDescription}
         </p>
       </div>
 
@@ -52,10 +52,10 @@ export default function ScanHubPage() {
         >
           <div className="flex items-center gap-3 mb-2">
             <Keyboard className="w-6 h-6 text-primary" />
-            <div className="text-lg font-semibold">전문 스캐너</div>
+            <div className="text-lg font-semibold">{i.professionalScanner}</div>
           </div>
           <p className="text-sm text-muted-foreground">
-            바코드/QR 스캐너가 키보드처럼 값을 입력하는 방식입니다.
+            {i.professionalScannerDescription}
           </p>
         </button>
 
@@ -66,10 +66,10 @@ export default function ScanHubPage() {
         >
           <div className="flex items-center gap-3 mb-2">
             <Camera className="w-6 h-6 text-primary" />
-            <div className="text-lg font-semibold">카메라 스캔</div>
+            <div className="text-lg font-semibold">{i.cameraScan}</div>
           </div>
           <p className="text-sm text-muted-foreground">
-            태블릿이나 휴대폰 카메라로 QR을 비춰 출석 처리합니다.
+            {i.cameraScanDescription}
           </p>
         </button>
       </div>
