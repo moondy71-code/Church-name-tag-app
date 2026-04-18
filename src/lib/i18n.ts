@@ -126,6 +126,11 @@ export interface Translations {
   invalidQrCode: string;
   scanProcessFailed: string;
   cameraStartFailed: string;
+  labelGender: string;
+  optionMale: string;
+  optionFemale: string;
+  labelNotes: string;
+  placeholderNotes: string;
 
 
 };
@@ -138,7 +143,7 @@ const ko: Translations = {
   navAttendance: '출석 기록',
   navSettings: '설정',
   memberCount: (n) => `(${n}명)`,
-  newMember: '새 교인',
+  newMember: '새 등록',
   searchPlaceholder: '이름, 전화번호, 직분, 부서 검색...',
   noMembers: '등록된 교인이 없습니다',
   noMembersHint: '위의 "새 교인" 버튼으로 교인을 등록하세요',
@@ -161,7 +166,7 @@ const ko: Translations = {
   selectPlaceholder: '선택',
   btnSave: '수정 완료',
   btnAdd: '등록하기',
-  roles: ['목사', '장로', '집사', '권사', '청년', '학생', '새신자', '기타'],
+  roles: ['목사', '장로', '집사', '권사', '청년', '학생', '새신자', '평신도'],
   nameTagTitle: '명찰 만들기',
   deselectAll: '선택 해제',
   selectAll: '전체 선택',
@@ -258,6 +263,11 @@ const ko: Translations = {
   invalidQrCode: '잘못된 QR 코드입니다',
   scanProcessFailed: '출석 처리 실패',
   cameraStartFailed: '카메라 실행 실패 (권한 허용 또는 HTTPS 확인)',
+  labelGender: "성별",
+  optionMale: "남",
+  optionFemale: "여",
+  labelNotes: "기타",
+  placeholderNotes: "가족 관계, 특이사항 등",
   
 };
 
@@ -269,7 +279,7 @@ const en: Translations = {
   navAttendance: 'Attendance',
   navSettings: 'Settings',
   memberCount: (n) => `(${n})`,
-  newMember: 'New Member',
+  newMember: 'New registration',
   searchPlaceholder: 'Search name, phone, role, group...',
   noMembers: 'No members registered',
   noMembersHint: 'Click "New Member" to add one',
@@ -292,7 +302,7 @@ const en: Translations = {
   selectPlaceholder: 'Select',
   btnSave: 'Save',
   btnAdd: 'Register',
-  roles: ['Pastor', 'Elder', 'Deacon', 'Deaconess', 'Youth', 'Student', 'Newcomer', 'Other'],
+  roles: ['Pastor', 'Elder', 'Deacon', 'Deaconess', 'Youth', 'Student', 'Newcomer', 'Layperson'],
   nameTagTitle: 'Name Tags',
   deselectAll: 'Deselect All',
   selectAll: 'Select All',
@@ -389,6 +399,11 @@ const en: Translations = {
   invalidQrCode: 'Invalid QR code',
   scanProcessFailed: 'Failed to process attendance',
   cameraStartFailed: 'Failed to start camera (check permission or HTTPS)',
+  labelGender: "Gender",
+  optionMale: "Male",
+  optionFemale: "Female",
+  labelNotes: "Notes",
+  placeholderNotes: "Family, special notes, etc.",
 
 };
 

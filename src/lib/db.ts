@@ -11,6 +11,8 @@ export interface Member {
   role: string;
   grade?: string;
   group?: string;
+  gender?: "male" | "female";
+  notes?: string;
   customFields?: Record<string, string>;
   createdAt: Date;
   updatedAt: Date;

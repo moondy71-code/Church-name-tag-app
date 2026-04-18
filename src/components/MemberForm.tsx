@@ -18,14 +18,16 @@ export default function MemberForm({ member, onSaved, onCancel }: Props) {
   const i = t();
   const lang = getLang();
   const [form, setForm] = useState({
-    lastName: member?.lastName || '',
-    firstName: member?.firstName || '',
-    birthDate: member?.birthDate || '',
-    phone: member?.phone || '',
-    role: member?.role || '',
-    grade: member?.grade || '',
-    group: member?.group || '',
-    photo: member?.photo || '',
+    firstName: member?.firstName || "",
+    lastName: member?.lastName || "",
+    phone: member?.phone || "",
+    birthDate: member?.birthDate || "",
+    gender: member?.gender || "male",
+    grade: member?.grade || "",
+    group: member?.group || "",
+    photo: member?.photo || "",
+    role: member?.role || "",
+    notes: member?.notes || "",
   });
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -104,6 +106,32 @@ img.onload = () => {
             <Input value={form.lastName} onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))} placeholder={i.placeholderLastName} />
           </div>
         </div>
+      <div>
+        <Label>{i.labelGender}</Label>
+        <div className="mt-2 flex gap-6">
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name="gender"
+              value="male"
+              checked={form.gender === "male"}
+              onChange={(e) => setForm((f) => ({ ...f, gender: e.target.value as "male" | "female" }))}
+            />
+            {i.optionMale}
+          </label>
+
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name="gender"
+              value="female"
+              checked={form.gender === "female"}
+              onChange={(e) => setForm((f) => ({ ...f, gender: e.target.value as "male" | "female" }))}
+            />
+            {i.optionFemale}
+          </label>
+        </div>
+      </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label>{i.labelBirthDate}</Label>
@@ -158,7 +186,16 @@ img.onload = () => {
           <Input value={form.group} onChange={(e) => setForm((f) => ({ ...f, group: e.target.value }))} placeholder={i.placeholderGroup} />
         </div>
       </div>
-
+<div>
+  <Label>{i.labelNotes}</Label>
+  <textarea
+    value={form.notes}
+    onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
+    className="w-full border rounded-md p-2 text-sm"
+    rows={3}
+    placeholder={i.placeholderNotes}
+  />
+</div>
       <Button onClick={handleSave} className="w-full gap-2">
         <Save className="w-4 h-4" />
         {member ? i.btnSave : i.btnAdd}
