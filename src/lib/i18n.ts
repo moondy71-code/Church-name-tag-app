@@ -123,6 +123,9 @@ export interface Translations {
   professionalScannerDescription: string;
   cameraScan: string;
   cameraScanDescription: string;
+  invalidQrCode: string;
+  scanProcessFailed: string;
+  cameraStartFailed: string;
 
 
 };
@@ -252,6 +255,9 @@ const ko: Translations = {
   professionalScannerDescription: '바코드/QR 스캐너가 키보드처럼 값을 입력하는 방식입니다.',
   cameraScan: '카메라 스캔',
   cameraScanDescription: '태블릿이나 휴대폰 카메라로 QR을 비춰 출석 처리합니다.',
+  invalidQrCode: '잘못된 QR 코드입니다',
+  scanProcessFailed: '출석 처리 실패',
+  cameraStartFailed: '카메라 실행 실패 (권한 허용 또는 HTTPS 확인)',
   
 };
 
@@ -380,6 +386,9 @@ const en: Translations = {
   professionalScannerDescription: 'Use a barcode/QR scanner that inputs values like a keyboard.',
   cameraScan: 'Camera Scan',
   cameraScanDescription: 'Use a tablet or phone camera to scan the QR code for attendance.',
+  invalidQrCode: 'Invalid QR code',
+  scanProcessFailed: 'Failed to process attendance',
+  cameraStartFailed: 'Failed to start camera (check permission or HTTPS)',
 
 };
 

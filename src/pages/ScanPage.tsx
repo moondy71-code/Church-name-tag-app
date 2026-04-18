@@ -44,94 +44,105 @@ export default function ScanPage() {
     db.attendance.where('date').equals(today).count().then(setTodayCount);
   }, [today, lastResult]);
 
-  const startScan = async () => {
-    try {
-      const scanner = new Html5Qrcode(containerRef.current);
-      scannerRef.current = scanner;
-      setScanning(true);
+const startScan = async () => {
+  try {
+    const scanner = new Html5Qrcode(containerRef.current);
+    scannerRef.current = scanner;
+    setScanning(true);
 
-      await scanner.start(
-        { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        async (text) => {
-          try {
-            const memberId = parseScannedValue(text);
+    // 카메라 권한 먼저 요청
+    const permission = await navigator.mediaDevices.getUserMedia({ video: true });
+    permission.getTracks().forEach((track) => track.stop());
 
-            if (!memberId) {
-              setLastResult({
-                success: false,
-                name: '',
-                message: i.invalidQr,
-              });
-            } else {
-              const member =
-                (await db.members.where('id').equals(memberId as never).first()) ||
-                (await db.members.where('id').equals(Number(memberId) as never).first());
+    await scanner.start(
+      { facingMode: 'environment' },
+      {
+        fps: 10,
+        qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+          const size = Math.min(viewfinderWidth, viewfinderHeight) * 0.8;
+          return { width: size, height: size };
+        },
+      },
+      async (text) => {
+        try {
+          const memberId = parseScannedValue(text);
 
-              if (!member) {
-                setLastResult({
-                  success: false,
-                  name: '',
-                  message: i.memberNotFound,
-                });
-              } else {
-                const existing = await db.attendance
-                  .where('date')
-                  .equals(today)
-                  .and((r) => String(r.memberId) === String(member.id))
-                  .first();
-
-                const displayName =
-                  member.name || `${member.lastName || ''}${member.firstName || ''}`.trim();
-
-                if (existing) {
-                  setLastResult({
-                    success: false,
-                    name: displayName,
-                    message: i.alreadyChecked,
-                  });
-                } else {
-                  await db.attendance.add({
-                    memberId: member.id!,
-                    memberName: displayName,
-                    date: today,
-                    time: format(new Date(), 'HH:mm'),
-                    scannedData: { memberId },
-                    createdAt: new Date(),
-                  });
-
-                  setLastResult({
-                    success: true,
-                    name: displayName,
-                    message: i.attendanceDone,
-                  });
-                }
-              }
-            }
-          } catch (error) {
-            console.error(error);
+          if (!memberId) {
             setLastResult({
               success: false,
               name: '',
-              message: i.scanProcessingError,
+              message: i.invalidQr,
             });
+          } else {
+            const member =
+              (await db.members.where('id').equals(memberId as never).first()) ||
+              (await db.members.where('id').equals(Number(memberId) as never).first());
+
+            if (!member) {
+              setLastResult({
+                success: false,
+                name: '',
+                message: i.memberNotFound,
+              });
+            } else {
+              const existing = await db.attendance
+                .where('date')
+                .equals(today)
+                .and((r) => String(r.memberId) === String(member.id))
+                .first();
+
+              const displayName =
+                member.name || `${member.lastName || ''}${member.firstName || ''}`.trim();
+
+              if (existing) {
+                setLastResult({
+                  success: false,
+                  name: displayName,
+                  message: i.alreadyChecked,
+                });
+              } else {
+                await db.attendance.add({
+                  memberId: member.id!,
+                  memberName: displayName,
+                  date: today,
+                  time: format(new Date(), 'HH:mm'),
+                  scannedData: { memberId },
+                  createdAt: new Date(),
+                });
+
+                setLastResult({
+                  success: true,
+                  name: displayName,
+                  message: i.attendanceDone,
+                });
+              }
+            }
           }
+        } catch (error) {
+          console.error(error);
+          setLastResult({
+            success: false,
+            name: '',
+            message: i.scanProcessingError,
+          });
+        }
 
-          await scanner.pause(true);
-          setTimeout(() => {
-            try {
-              scanner.resume();
-            } catch {}
-          }, 2000);
-        },
-        () => {}
-      );
-    } catch (err) {
-      console.error(err);
-      setScanning(false);
-    }
-  };
-
+        await scanner.stop();
+        scannerRef.current = null;
+        setScanning(false);
+      },
+      () => {}
+    );
+  } catch (err) {
+    console.error(err);
+    setLastResult({
+      success: false,
+      name: '',
+      message: i.cameraStartFailed,
+    });
+    setScanning(false);
+  }
+};
   const stopScan = async () => {
     try {
       if (scannerRef.current) {
