@@ -33,10 +33,13 @@ export interface QrFieldConfig {
   fields: string[];
 }
 
+  
+
 export interface AppSettings {
   id?: number;
   churchName?: string;
   language?: string;
+  groups?: string[]; 
 }
 
 class ChurchDB extends Dexie {
@@ -88,6 +91,7 @@ db.on('populate', () => {
   db.settings.add({
     churchName: '',
     language: 'ko',
+    groups: [],
   });
 });
 

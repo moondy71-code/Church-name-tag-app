@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { t, getLang } from '@/lib/i18n';
 import BirthDateInput from '@/components/BirthDateInput';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 interface Props {
   member?: Member;
@@ -16,6 +17,8 @@ interface Props {
 
 export default function MemberForm({ member, onSaved, onCancel }: Props) {
   const i = t();
+  const appSettings = useLiveQuery(() => db.settings.get(1), []);
+  const groups = appSettings?.groups || [];
   const lang = getLang();
   const [form, setForm] = useState({
     firstName: member?.firstName || "",
@@ -181,10 +184,30 @@ img.onload = () => {
             <Input value={form.grade} onChange={(e) => setForm((f) => ({ ...f, grade: e.target.value }))} placeholder={i.placeholderGrade} />
           </div>
         </div>
-        <div>
-          <Label>{i.labelGroup}</Label>
-          <Input value={form.group} onChange={(e) => setForm((f) => ({ ...f, group: e.target.value }))} placeholder={i.placeholderGroup} />
-        </div>
+          <div>
+            <Label>{i.labelGroup}</Label>
+            <Select
+              value={form.group || "__none__"}
+              onValueChange={(value) =>
+                setForm((f) => ({
+                  ...f,
+                  group: value === "__none__" ? "" : value,
+                }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={i.placeholderGroup} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">{i.placeholderGroup}</SelectItem>
+                {groups.map((group) => (
+                  <SelectItem key={group} value={group}>
+                    {group}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
       </div>
 <div>
   <Label>{i.labelNotes}</Label>
