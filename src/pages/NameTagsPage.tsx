@@ -105,16 +105,17 @@ export default function NameTagsPage() {
 
       {/* Printable name tags — 93mm × 62mm, photo left, name + QR right */}
       {selectedMembers.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 print:grid-cols-2 print:gap-2">
+       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 print:grid-cols-2 print:gap-1 print:px-1">
           {selectedMembers.map((m) => {
             const isHangulName = /[가-힣]/.test(`${m.lastName || ''}${m.firstName || ''}`);
 
             return (
               <div
-                key={m.id}
-                className="bg-card rounded-xl border border-border flex overflow-hidden name-tag-shadow print:break-inside-avoid print:shadow-none print:border print:rounded-lg"
-                style={{ width: '93mm', height: '62mm' }}
-              >
+                  key={m.id}
+                  className="bg-card rounded-xl border border-border flex overflow-hidden name-tag-shadow print:break-inside-avoid print:shadow-none print:border print:rounded-lg print:scale-[0.97] origin-top"
+                  style={{ width: '90mm', height: '60mm' }}
+                >
+           
                 {/* Left: Photo */}
                 <div
                   className="flex-shrink-0 flex items-center justify-center bg-muted"
