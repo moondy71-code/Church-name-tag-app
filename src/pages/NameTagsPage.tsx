@@ -113,7 +113,7 @@ export default function NameTagsPage() {
               <div
                   key={m.id}
                   className="bg-card rounded-xl border border-border flex overflow-hidden name-tag-shadow print:break-inside-avoid print:shadow-none print:border print:rounded-lg print:scale-[0.97] origin-top"
-                  style={{ width: '90mm', height: '60mm' }}
+                  style={{ width: '97mm', height: '65mm' }}
                 >
            
                 {/* Left: Photo */}
