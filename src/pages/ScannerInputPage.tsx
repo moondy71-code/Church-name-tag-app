@@ -72,7 +72,7 @@ export default function ScannerInputPage() {
       }
 
       const member =
-        (await db.members.where("id").equals(memberId as never).first()) ||
+        (await db.members.where("memberId").equals(memberId).first()) ||
         (await db.members.where("id").equals(Number(memberId) as never).first());
 
       if (!member) {

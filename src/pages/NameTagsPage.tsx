@@ -34,8 +34,8 @@ export default function NameTagsPage() {
     }
   };
 
-  const buildQrData = (m: Member) => {
-  return String(m.id);
+ const buildQrData = (m: Member) => {
+  return m.memberId || "";
 };
 
   const printSelected = () => {

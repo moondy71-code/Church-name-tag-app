@@ -2,6 +2,7 @@ import Dexie, { type Table } from 'dexie';
 
 export interface Member {
   id?: number;
+  memberId?: string;
   name: string; // computed full name for display/search
   lastName: string;
   firstName: string;
@@ -40,6 +41,8 @@ export interface AppSettings {
   churchName?: string;
   language?: string;
   groups?: string[]; 
+  memberIdPrefix?: string;       
+  memberIdNextNumber?: number;   
 }
 
 class ChurchDB extends Dexie {
@@ -78,6 +81,13 @@ class ChurchDB extends Dexie {
       qrConfig: '++id',
       settings: '++id, churchName, language',
     });
+
+    this.version(4).stores({
+      members: '++id, memberId, name, lastName, firstName, phone, role, group',
+      attendance: '++id, memberId, date, memberName',
+      qrConfig: '++id',
+      settings: '++id, churchName, language',
+    });
   }
 }
 
@@ -92,6 +102,8 @@ db.on('populate', () => {
     churchName: '',
     language: 'ko',
     groups: [],
+    memberIdPrefix: 'Moon',
+    memberIdNextNumber: 1,
   });
 });
 

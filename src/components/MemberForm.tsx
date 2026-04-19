@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { t, getLang } from '@/lib/i18n';
 import BirthDateInput from '@/components/BirthDateInput';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { generateMemberId } from "@/lib/id";
 
 interface Props {
   member?: Member;
@@ -18,7 +19,7 @@ interface Props {
 export default function MemberForm({ member, onSaved, onCancel }: Props) {
   const i = t();
   const appSettings = useLiveQuery(() => db.settings.get(1), []);
-const groups = Array.isArray(appSettings?.groups)
+  const groups = Array.isArray(appSettings?.groups)
   ? [...new Set(appSettings.groups.map((g) => String(g).trim()).filter(Boolean))]
   : [];
   const lang = getLang();
@@ -71,10 +72,30 @@ img.onload = () => {
     const name = buildFullName(form.lastName, form.firstName, lang);
     const now = new Date();
     if (member?.id) {
-      await db.members.update(member.id, { ...form, name, updatedAt: now });
-    } else {
-      await db.members.add({ ...form, name, createdAt: now, updatedAt: now });
-    }
+  await db.members.update(member.id, { ...form, name, updatedAt: now });
+} else {
+  const prefix = (appSettings?.memberIdPrefix || "Moon").trim();
+  const nextNumber = appSettings?.memberIdNextNumber || 1;
+  const memberId = generateMemberId(prefix, nextNumber);
+
+  await db.members.add({
+    ...form,
+    name,
+    memberId,
+    createdAt: now,
+    updatedAt: now,
+  });
+
+  await db.settings.put({
+    ...appSettings,
+    id: 1,
+    churchName: appSettings?.churchName || "",
+    language: appSettings?.language || "ko",
+    groups: appSettings?.groups || [],
+    memberIdPrefix: prefix,
+    memberIdNextNumber: nextNumber + 1,
+  });
+}
     onSaved();
   };
 
