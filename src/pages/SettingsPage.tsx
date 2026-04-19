@@ -3,7 +3,6 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import {
   Settings,
-  Save,
   Trash2,
   AlertTriangle,
   Download,
@@ -11,9 +10,9 @@ import {
   Database,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Save } from 'lucide-react';
 import { t, getLang, setLang, type Lang } from '@/lib/i18n';
 
 type BackupData = {
@@ -61,39 +60,38 @@ export default function SettingsPage() {
 
     alert(i.savedChurchName);
   };
-const addGroup = () => {
-  if (!newGroup.trim()) return;
-  setGroups((prev) => [...prev, newGroup.trim()]);
+const addGroup = async () => {
+  const value = newGroup.trim();
+  if (!value) return;
+
+  const nextGroups = [...groups, value];
+
+  setGroups(nextGroups);
   setNewGroup('');
-};
 
-const removeGroup = (index: number) => {
-  setGroups((prev) => prev.filter((_, i) => i !== index));
-};
-
-const saveGroups = async () => {
   await db.settings.put({
     ...appSettings,
     id: 1,
     churchName: appSettings?.churchName || '',
     language: appSettings?.language || getLang(),
-    groups,
+    groups: nextGroups,
   });
-
-  alert("Groups saved");
 };
-  const saveLanguage = async () => {
-    await db.settings.put({
-      ...appSettings,
-      id: 1,
-      churchName: appSettings?.churchName || '',
-      language,
-    });
 
-    setLang(language);
-    alert(i.savedLanguage);
-    window.location.reload();
-  };
+const removeGroup = async (index: number) => {
+  const nextGroups = groups.filter((_, i) => i !== index);
+
+  setGroups(nextGroups);
+
+  await db.settings.put({
+    ...appSettings,
+    id: 1,
+    churchName: appSettings?.churchName || '',
+    language: appSettings?.language || getLang(),
+    groups: nextGroups,
+  });
+};
+
 
   const exportBackup = async () => {
     const backup: BackupData = {
@@ -169,7 +167,7 @@ const saveGroups = async () => {
     }
 
     alert(i.importSuccess);
-    window.location.reload();
+    
   };
 
   const handleImportFileChange = async (
@@ -207,26 +205,51 @@ return (
       <p className="text-sm text-muted-foreground">{i.languageHint}</p>
 
       <div className="flex gap-3">
-        <Button
-          type="button"
-          variant={language === 'ko' ? 'default' : 'outline'}
-          onClick={() => setLanguageState('ko')}
-        >
-          {i.langKorean}
-        </Button>
+ <div className="flex gap-3">
+  <Button
+    type="button"
+    variant={language === 'ko' ? 'default' : 'outline'}
+    onClick={async () => {
+      setLanguageState('ko');
+      setLang('ko');
 
-        <Button
-          type="button"
-          variant={language === 'en' ? 'default' : 'outline'}
-          onClick={() => setLanguageState('en')}
-        >
-          {i.langEnglish}
-        </Button>
+      await db.settings.put({
+        ...appSettings,
+        id: 1,
+        churchName: appSettings?.churchName || '',
+        language: 'ko',
+        groups: appSettings?.groups || [],
+      });
+
+      window.location.reload();
+    }}
+  >
+    {i.langKorean}
+  </Button>
+
+  <Button
+    type="button"
+    variant={language === 'en' ? 'default' : 'outline'}
+    onClick={async () => {
+      setLanguageState('en');
+      setLang('en');
+
+      await db.settings.put({
+        ...appSettings,
+        id: 1,
+        churchName: appSettings?.churchName || '',
+        language: 'en',
+        groups: appSettings?.groups || [],
+      });
+
+      window.location.reload();
+    }}
+  >
+    {i.langEnglish}
+  </Button>
+</div>
       </div>
 
-      <Button onClick={saveLanguage} className="gap-2">
-        <Save className="w-4 h-4" /> {i.saveLanguage}
-      </Button>
     </div>
 
     <div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
@@ -275,10 +298,6 @@ return (
         ))}
       </div>
 
-      <Button onClick={saveGroups} className="gap-2">
-        <Save className="w-4 h-4" />
-        Save Groups
-      </Button>
     </div>
 
     <div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
