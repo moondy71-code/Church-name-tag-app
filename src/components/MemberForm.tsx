@@ -18,7 +18,9 @@ interface Props {
 export default function MemberForm({ member, onSaved, onCancel }: Props) {
   const i = t();
   const appSettings = useLiveQuery(() => db.settings.get(1), []);
-  const groups = appSettings?.groups || [];
+const groups = Array.isArray(appSettings?.groups)
+  ? [...new Set(appSettings.groups.map((g) => String(g).trim()).filter(Boolean))]
+  : [];
   const lang = getLang();
   const [form, setForm] = useState({
     firstName: member?.firstName || "",
@@ -186,27 +188,29 @@ img.onload = () => {
         </div>
           <div>
             <Label>{i.labelGroup}</Label>
-            <Select
-              value={form.group || "__none__"}
-              onValueChange={(value) =>
-                setForm((f) => ({
-                  ...f,
-                  group: value === "__none__" ? "" : value,
-                }))
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={i.placeholderGroup} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">{i.placeholderGroup}</SelectItem>
-                {groups.map((group) => (
-                  <SelectItem key={group} value={group}>
-                    {group}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              {groups.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  {i.noGroupsMessage}
+                </p>
+              ) : (
+                <Select
+                  value={form.group || ""}
+                  onValueChange={(value) =>
+                    setForm((prev) => ({ ...prev, group: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={i.selectGroup} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {groups.map((group) => (
+                      <SelectItem key={group} value={group}>
+                        {group}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
           </div>
       </div>
 <div>
