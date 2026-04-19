@@ -131,6 +131,11 @@ export interface Translations {
   optionFemale: string;
   labelNotes: string;
   placeholderNotes: string;
+  groups: string;
+  addGroup: string;
+  groupName: string;
+  selectGroup: string;
+  noGroupsConfigured: string;
 
 
 };
@@ -268,6 +273,11 @@ const ko: Translations = {
   optionFemale: "여",
   labelNotes: "기타",
   placeholderNotes: "가족 관계, 특이사항 등",
+  groups: "그룹",
+  addGroup: "그룹 추가",
+  groupName: "그룹 이름",
+  selectGroup: "그룹 선택",
+  noGroupsConfigured: "등록된 그룹이 없습니다",
   
 };
 
@@ -404,6 +414,11 @@ const en: Translations = {
   optionFemale: "Female",
   labelNotes: "Notes",
   placeholderNotes: "Family, special notes, etc.",
+  groups: "Groups",
+  addGroup: "Add Group",
+  groupName: "Group Name",
+  selectGroup: "Select group",
+  noGroupsConfigured: "No groups configured",
 
 };
 

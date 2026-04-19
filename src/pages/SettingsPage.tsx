@@ -220,8 +220,6 @@ return (
         language: 'ko',
         groups: appSettings?.groups || [],
       });
-
-      window.location.reload();
     }}
   >
     {i.langKorean}
@@ -241,8 +239,6 @@ return (
         language: 'en',
         groups: appSettings?.groups || [],
       });
-
-      window.location.reload();
     }}
   >
     {i.langEnglish}
