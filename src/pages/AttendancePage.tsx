@@ -30,7 +30,7 @@ export default function AttendancePage() {
         [i.excelBirthDate]: member?.birthDate || '',
         [i.excelDate]: r.date,
         [i.excelTime]: r.time,
-        [i.excelMemberId]: r.memberId ?? '',
+        [i.excelMemberId]: r.scannedData?.memberId || member?.memberId || r.memberId || '',
       };
     });
 
@@ -68,7 +68,7 @@ export default function AttendancePage() {
 
       if (!summaryMap.has(key)) {
         summaryMap.set(key, {
-          memberId: r.memberId ?? '',
+          memberId: r.scannedData?.memberId || member?.memberId || r.memberId || '',
           memberName: r.memberName,
           birthDate: member?.birthDate || '',
           attendanceCount: 0,
@@ -121,7 +121,7 @@ export default function AttendancePage() {
             [i.excelBirthDate]: member?.birthDate || '',
             [i.excelDate]: r.date,
             [i.excelTime]: r.time,
-            [i.excelMemberId]: r.memberId ?? '',
+            [i.excelMemberId]: r.scannedData?.memberId || member?.memberId || r.memberId || '',
           };
         });
 
@@ -206,7 +206,7 @@ export default function AttendancePage() {
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{r.time}</td>
                     <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
-                      {r.memberId ?? '-'}
+                      {r.scannedData?.memberId || member?.memberId || r.memberId || '-'}
                     </td>
                   </tr>
                 );

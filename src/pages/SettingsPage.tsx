@@ -27,6 +27,7 @@ export default function SettingsPage() {
   const appSettings = useLiveQuery(() => db.settings.get(1), []);
   const [churchName, setChurchName] = useState('');
   const [groups, setGroups] = useState<string[]>([]);
+  const [prefix, setPrefix] = useState("");
   const [newGroup, setNewGroup] = useState('');
   const [language, setLanguageState] = useState<Lang>(getLang());
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -38,6 +39,13 @@ export default function SettingsPage() {
       setChurchName(appSettings.churchName || '');
     }
   }, [appSettings]);
+
+  useEffect(() => {
+  if (appSettings?.memberIdPrefix) {
+    setPrefix(appSettings.memberIdPrefix);
+  }
+}, [appSettings]);
+
   useEffect(() => {
     if (appSettings?.groups) {
       setGroups(appSettings.groups);
@@ -206,43 +214,47 @@ return (
 
       <div className="flex gap-3">
  <div className="flex gap-3">
-  <Button
-    type="button"
-    variant={language === 'ko' ? 'default' : 'outline'}
-    onClick={async () => {
-      setLanguageState('ko');
-      setLang('ko');
+ <Button
+  type="button"
+  variant={language === 'ko' ? 'default' : 'outline'}
+  onClick={async () => {
+    setLanguageState('ko');
+    setLang('ko');
 
-      await db.settings.put({
-        ...appSettings,
-        id: 1,
-        churchName: appSettings?.churchName || '',
-        language: 'ko',
-        groups: appSettings?.groups || [],
-      });
-    }}
-  >
-    {i.langKorean}
-  </Button>
+    await db.settings.put({
+      ...appSettings,
+      id: 1,
+      churchName: appSettings?.churchName || "",
+      language: "ko",
+      groups: appSettings?.groups || [],
+      memberIdPrefix: prefix.trim() || "Moon",
+      memberIdNextNumber: appSettings?.memberIdNextNumber || 1,
+    });
+  }}
+>
+  {i.langKorean}
+</Button>
 
-  <Button
-    type="button"
-    variant={language === 'en' ? 'default' : 'outline'}
-    onClick={async () => {
-      setLanguageState('en');
-      setLang('en');
+<Button
+  type="button"
+  variant={language === 'en' ? 'default' : 'outline'}
+  onClick={async () => {
+    setLanguageState('en');
+    setLang('en');
 
-      await db.settings.put({
-        ...appSettings,
-        id: 1,
-        churchName: appSettings?.churchName || '',
-        language: 'en',
-        groups: appSettings?.groups || [],
-      });
-    }}
-  >
-    {i.langEnglish}
-  </Button>
+    await db.settings.put({
+      ...appSettings,
+      id: 1,
+      churchName: appSettings?.churchName || "",
+      language: "en",
+      groups: appSettings?.groups || [],
+      memberIdPrefix: prefix.trim() || "Moon",
+      memberIdNextNumber: appSettings?.memberIdNextNumber || 1,
+    });
+  }}
+>
+  {i.langEnglish}
+</Button>
 </div>
       </div>
 
@@ -262,8 +274,23 @@ return (
         <Save className="w-4 h-4" /> {i.saveChurchName}
       </Button>
     </div>
+<div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
+ <h2 className="font-bold">{i.memberIdPrefix}</h2>
 
+<Input
+  value={prefix}
+  onChange={(e) =>
+    setPrefix(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))
+  }
+  placeholder={i.prefixPlaceholder}
+/>
+
+<p className="text-xs text-muted-foreground">
+  {i.prefixDescription}
+</p>
+</div>
     <div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
+
       <h2 className="font-bold">{i.groups}</h2>
 
       <div className="flex gap-2">

@@ -138,6 +138,9 @@ export interface Translations {
   noGroupsConfigured: string;
   delete: string;
   noGroupsMessage: string;
+  memberIdPrefix: string;
+  prefixPlaceholder: string;
+  prefixDescription: string;
 
 
 };
@@ -282,6 +285,9 @@ const ko: Translations = {
   noGroupsConfigured: "등록된 그룹이 없습니다",
   delete: "삭제",
   noGroupsMessage: "먼저 설정에서 그룹을 추가해주세요",
+  memberIdPrefix: "고유 ID 앞자리",
+  prefixPlaceholder: "예: MyChurch",
+  prefixDescription: "고유 ID 앞에 붙는 이름을 정하세요 (예: MyChurch0001)",
   
 };
 
@@ -425,6 +431,9 @@ const en: Translations = {
   noGroupsConfigured: "No groups configured",
   delete: "Delete",
   noGroupsMessage: "Please add a group in settings first",
+  memberIdPrefix: "ID Prefix",
+  prefixPlaceholder: "e.g. MyChurch",
+  prefixDescription: "Set the name that comes before the ID (e.g. MyChurch0001)",
 
 };
 

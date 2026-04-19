@@ -42,6 +42,7 @@ const data = members.map((m) => {
     [i.excelRole]: m.role,
     [i.excelGrade]: m.grade || '',
     [i.excelGroup]: m.group || '',
+    [i.excelMemberId]: m.memberId || '',  
   };
 
   if (isKorean) {
