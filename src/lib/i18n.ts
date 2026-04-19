@@ -136,6 +136,7 @@ export interface Translations {
   groupName: string;
   selectGroup: string;
   noGroupsConfigured: string;
+  delete: string;
 
 
 };
@@ -278,6 +279,7 @@ const ko: Translations = {
   groupName: "그룹 이름",
   selectGroup: "그룹 선택",
   noGroupsConfigured: "등록된 그룹이 없습니다",
+  delete: "삭제",
   
 };
 
@@ -419,6 +421,7 @@ const en: Translations = {
   groupName: "Group Name",
   selectGroup: "Select group",
   noGroupsConfigured: "No groups configured",
+  delete: "Delete",
 
 };
 

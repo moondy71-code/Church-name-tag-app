@@ -264,16 +264,16 @@ return (
     </div>
 
     <div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
-      <h2 className="font-bold">Groups</h2>
+      <h2 className="font-bold">{i.groups}</h2>
 
       <div className="flex gap-2">
         <Input
           value={newGroup}
           onChange={(e) => setNewGroup(e.target.value)}
-          placeholder="New group"
+          placeholder={i.groupName}
           className="flex-1"
         />
-        <Button onClick={addGroup}>Add</Button>
+        <Button onClick={addGroup}>{i.addGroup}</Button>
       </div>
 
       <div className="space-y-2">
@@ -288,7 +288,7 @@ return (
               size="sm"
               onClick={() => removeGroup(idx)}
             >
-              Delete
+              {i.delete}
             </Button>
           </div>
         ))}
