@@ -1,23 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout, { type PageId } from '@/components/Layout';
 import MembersPage from './MembersPage';
 import NameTagsPage from './NameTagsPage';
-import ScannerInputPage from './ScannerInputPage';
 import ScanHubPage from './ScanHubPage';
-import ScanPage from './ScanPage';
 import AttendancePage from './AttendancePage';
 import SettingsPage from './SettingsPage';
 
 const pages: Record<PageId, React.ComponentType> = {
   members: MembersPage,
   nametags: NameTagsPage,
-  scan: ScanHubPage, 
+  scan: ScanHubPage,
   attendance: AttendancePage,
   settings: SettingsPage,
 };
 
 export default function Index() {
   const [currentPage, setCurrentPage] = useState<PageId>('members');
+  const [showSplash, setShowSplash] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
+
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => {
+      setFadeOut(true);
+    }, 2000); // 1.7초 후 페이드아웃 시작
+
+    const removeTimer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2600); // 완전히 사라진 뒤 메인 화면
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(removeTimer);
+    };
+  }, []);
+
+  if (showSplash) {
+    return (
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500 ${
+          fadeOut ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
+        <img
+          src="/pwa-512x512.png"
+          alt="splash"
+          className="w-3/4 max-w-xs object-contain animate-[fadeIn_0.6s_ease-in-out]"
+        />
+      </div>
+    );
+  }
+
   const Page = pages[currentPage];
 
   return (
