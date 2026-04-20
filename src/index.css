@@ -118,6 +118,7 @@
     background: white !important;
     margin: 0 !important;
     padding: 0 !important;
+    overflow: hidden !important; /* 🔥 이거 추가 */
   }
 
   .print-page {
@@ -127,6 +128,9 @@
   page-break-after: always;
   break-after: page;
   align-content: start;
+}
+
+.print-page:not(:first-child) {
   padding-top: 12mm;
 }
 

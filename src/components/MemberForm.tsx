@@ -73,7 +73,12 @@ img.onload = () => {
     const name = buildFullName(form.lastName, form.firstName, lang);
     const now = new Date();
     if (member?.id) {
-  await db.members.update(member.id, { ...form, name, updatedAt: now });
+    await db.members.update(member.id, {
+    ...form,
+    role: normalizePosition(form.role),
+    name,
+    updatedAt: now
+  });
 } else {
   const prefix = (appSettings?.memberIdPrefix || "Moon").trim();
   const nextNumber = appSettings?.memberIdNextNumber || 1;
@@ -81,6 +86,7 @@ img.onload = () => {
 
   await db.members.add({
     ...form,
+    role: normalizePosition(form.role),
     name,
     memberId,
     createdAt: now,
