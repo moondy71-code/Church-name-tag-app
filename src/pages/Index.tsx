@@ -34,7 +34,22 @@ export default function Index() {
     };
   }, []);
 
- 
+  if (showSplash) {
+    return (
+      <div
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-white transition-opacity duration-500 ${
+          fadeOut ? 'opacity-0' : 'opacity-100'
+        }`}
+      >
+        <img
+          src="/pwa-512x512.png"
+          alt="splash"
+          className="w-3/4 max-w-xs object-contain animate-[fadeIn_0.6s_ease-in-out]"
+        />
+      </div>
+    );
+  }
+
   const Page = pages[currentPage];
 
   return (

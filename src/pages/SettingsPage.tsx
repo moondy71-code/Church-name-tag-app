@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Save } from 'lucide-react';
 import { t, getLang, setLang, type Lang } from '@/lib/i18n';
+import { toast } from "sonner";
 
 type BackupData = {
   version: number;
@@ -66,7 +67,7 @@ export default function SettingsPage() {
       language: appSettings?.language || getLang(),
     });
 
-    alert(i.savedChurchName);
+    toast.success(i.savedChurchName);
   };
 const addGroup = async () => {
   const value = newGroup.trim();
@@ -121,7 +122,7 @@ const removeGroup = async (index: number) => {
     a.click();
     URL.revokeObjectURL(url);
 
-    alert(i.exportSuccess);
+    toast.success (i.exportSuccess);
   };
 
   const openImportDialog = () => {
@@ -138,7 +139,7 @@ const removeGroup = async (index: number) => {
       !Array.isArray(parsed.attendance) ||
       !Array.isArray(parsed.settings)
     ) {
-      alert(i.invalidBackupFile);
+      toast.success (i.invalidBackupFile);
       return;
     }
 
@@ -174,7 +175,7 @@ const removeGroup = async (index: number) => {
       setLang(importedSettings.language);
     }
 
-    alert(i.importSuccess);
+    toast.success(i.importSuccess);
     
   };
 
@@ -188,7 +189,7 @@ const removeGroup = async (index: number) => {
       await importBackup(file);
     } catch (error) {
       console.error(error);
-      alert(i.importFailed);
+      toast.success(i.importFailed);
     } finally {
       e.target.value = '';
     }
