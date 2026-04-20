@@ -106,7 +106,7 @@
 @media print {
   @page {
     size: A4 portrait;
-    margin: 2mm;
+    margin: 6mm;
   }
 
   .no-print {
@@ -118,6 +118,27 @@
     background: white !important;
     margin: 0 !important;
     padding: 0 !important;
+  }
+
+  .print-page {
+  width: 100%;
+  min-height: 281mm;
+  box-sizing: border-box;
+  page-break-after: always;
+  break-after: page;
+  align-content: start;
+  padding-top: 12mm;
+}
+
+  .print-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  .badge-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    overflow: hidden;
   }
 }
 @keyframes fadeIn {

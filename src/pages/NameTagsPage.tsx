@@ -5,12 +5,23 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Printer, Check, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { t } from '@/lib/i18n';
+import { getPositionLabel, normalizePosition } from "@/lib/positions";
+import { getLang } from "@/lib/i18n";
+
+function chunkArray<T>(arr: T[], size: number) {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    chunks.push(arr.slice(i, i + size));
+  }
+  return chunks;
+}
 
 export default function NameTagsPage() {
   const members = useLiveQuery(() => db.members.orderBy('name').toArray(), []);
   const qrConfig = useLiveQuery(() => db.qrConfig.toArray(), []);
   const settings = useLiveQuery(() => db.settings.get(1), []); // 🔥 추가
   const [selected, setSelected] = useState<Set<number>>(new Set());
+  const lang = getLang();
   const i = t();
       useEffect(() => {
       document.title = "Church Attendance Name Tags";
@@ -43,6 +54,8 @@ export default function NameTagsPage() {
   };
 
   const selectedMembers = members?.filter((m) => selected.has(m.id!)) || [];
+
+  const pagedMembers = chunkArray(selectedMembers, 8);
 
   return (
     <div className="space-y-6">
@@ -92,7 +105,11 @@ export default function NameTagsPage() {
             </div>
 
             <span className="font-medium">{m.name}</span>
-            {m.role && <span className="text-xs text-muted-foreground">{m.role}</span>}
+            {m.role && (
+          <span className="text-xs text-muted-foreground">
+            {getPositionLabel(normalizePosition(m.role), lang)}
+          </span>
+        )}
           </button>
         ))}
 
@@ -104,120 +121,126 @@ export default function NameTagsPage() {
       </div>
 
       {/* Printable name tags — 93mm × 62mm, photo left, name + QR right */}
-      {selectedMembers.length > 0 && (
-       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 print:grid-cols-2 print:gap-1 print:px-1">
-          {selectedMembers.map((m) => {
-            const isHangulName = /[가-힣]/.test(`${m.lastName || ''}${m.firstName || ''}`);
+          {selectedMembers.length > 0 && (
+        <div className="space-y-4 print:space-y-0">
+          {pagedMembers.map((pageMembers, pageIndex) => (
+            <div
+              key={pageIndex}
+              className="print-page grid grid-cols-1 sm:grid-cols-2 gap-4 print:grid-cols-2 print:gap-1 print:px-1"
+            >
+              {pageMembers.map((m) => {
+                const isHangulName = /[가-힣]/.test(`${m.lastName || ''}${m.firstName || ''}`);
 
-            return (
-              <div
-                  key={m.id}
-                  className="bg-card rounded-xl border border-border flex overflow-hidden name-tag-shadow print:break-inside-avoid print:shadow-none print:border print:rounded-lg print:scale-[0.97] origin-top"
-                  style={{ width: '97mm', height: '65mm' }}
-                >
-           
-                {/* Left: Photo */}
-                <div
-                  className="flex-shrink-0 flex items-center justify-center bg-muted"
-                  style={{ width: '40mm', height: '60mm', padding: '3mm 2mm 0mm 2mm' }}
-                >
-                  {m.photo ? (
-                    <img
-                      src={m.photo}
-                      alt={m.name}
-                      style={{
-                        maxWidth: '100%',
-                        maxHeight: '100%',
-                        width: 'auto',
-                        height: 'auto',
-                        display: 'block',
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-muted-foreground">
-                      {m.name?.[0] || ''}
-                    </div>
-                  )}
-                </div>
-
-                {/* Right: Name top, QR bottom */}
-                <div className="flex-1 flex flex-col justify-between p-3 min-w-0">
-                  <div className="flex flex-col items-center text-center">
+                return (
+                  <div
+                    key={m.id}
+                    className="badge-card bg-card rounded-xl border border-border flex overflow-hidden name-tag-shadow print:break-inside-avoid print:shadow-none print:border print:rounded-lg print:scale-[0.97] origin-top"
+                    style={{ width: '97mm', height: '65mm' }}
+                  >
+                    {/* Left: Photo */}
                     <div
-                      className="uppercase text-muted-foreground w-full"
-                      style={{
-                        fontSize: '14px',
-                        fontWeight: 600,
-                        letterSpacing: '0.08em',
-                      }}
+                      className="flex-shrink-0 flex items-center justify-center bg-muted"
+                      style={{ width: '40mm', height: '60mm', padding: '3mm 2mm 0mm 2mm' }}
                     >
-                      {settings?.churchName?.trim() || i.churchName}
-                    </div>
-
-                    <div className="w-full flex flex-col items-center justify-center mt-1">
-                      {isHangulName ? (
-                        <div
+                      {m.photo ? (
+                        <img
+                          src={m.photo}
+                          alt={m.name}
                           style={{
-                            fontSize: 'clamp(28px, 7vw, 44px)',
-                            fontWeight: 800,
-                            lineHeight: 1.05,
-                            width: '100%',
-                            textAlign: 'center',
-                            whiteSpace: 'nowrap',
+                            maxWidth: '100%',
+                            maxHeight: '100%',
+                            width: 'auto',
+                            height: 'auto',
+                            display: 'block',
                           }}
-                        >
-                          {`${m.lastName || ''}${m.firstName || ''}`}
-                        </div>
+                        />
                       ) : (
-                        <>
-                          <div
-                            style={{
-                              fontSize: 'clamp(22px, 4vw, 36px)',
-                              fontWeight: 800,
-                              lineHeight: 1.05,
-                              width: '100%',
-                              textAlign: 'center',
-                              whiteSpace: 'nowrap',
-                            }}
-                          >
-                            {m.firstName || '\u00A0'}
-                          </div>
-
-                          <div
-                            style={{
-                              fontSize: 'clamp(18px, 3.5vw, 28px)',
-                              fontWeight: 800,
-                              lineHeight: 1.05,
-                              width: '100%',
-                              textAlign: 'center',
-                              whiteSpace: 'nowrap',
-                            }}
-                          >
-                            {m.lastName || '\u00A0'}
-                          </div>
-                        </>
+                        <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-muted-foreground">
+                          {m.name?.[0] || ''}
+                        </div>
                       )}
                     </div>
 
-                    {m.role && (
-                      <div className="text-lg text-accent font-semibold mt-2 text-center">
-                        {m.role}
-                      </div>
-                    )}
-                  </div>
+                    {/* Right: Name top, QR bottom */}
+                    <div className="flex-1 flex flex-col justify-between p-3 min-w-0">
+                      <div className="flex flex-col items-center text-center">
+                        <div
+                          className="uppercase text-muted-foreground w-full"
+                          style={{
+                            fontSize: '14px',
+                            fontWeight: 600,
+                            letterSpacing: '0.08em',
+                          }}
+                        >
+                          {settings?.churchName?.trim() || i.churchName}
+                        </div>
 
-                  {/* Bottom: QR */}
-                  <div className="flex justify-center">
-                    <QRCodeSVG
-                      value={buildQrData(m)}
-                      size={90}
-                      level="M"
-                    />
+                        <div className="w-full flex flex-col items-center justify-center mt-1">
+                          {isHangulName ? (
+                            <div
+                              style={{
+                                fontSize: 'clamp(28px, 7vw, 44px)',
+                                fontWeight: 800,
+                                lineHeight: 1.05,
+                                width: '100%',
+                                textAlign: 'center',
+                                whiteSpace: 'nowrap',
+                              }}
+                            >
+                              {`${m.lastName || ''}${m.firstName || ''}`}
+                            </div>
+                          ) : (
+                            <>
+                              <div
+                                style={{
+                                  fontSize: 'clamp(22px, 4vw, 36px)',
+                                  fontWeight: 800,
+                                  lineHeight: 1.05,
+                                  width: '100%',
+                                  textAlign: 'center',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {m.firstName || '\u00A0'}
+                              </div>
+
+                              <div
+                                style={{
+                                  fontSize: 'clamp(18px, 3.5vw, 28px)',
+                                  fontWeight: 800,
+                                  lineHeight: 1.05,
+                                  width: '100%',
+                                  textAlign: 'center',
+                                  whiteSpace: 'nowrap',
+                                }}
+                              >
+                                {m.lastName || '\u00A0'}
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        {m.role && (
+                          <div className="text-lg text-accent font-semibold mt-2 text-center">
+                            {m.role}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Bottom: QR */}
+                      <div className="flex justify-center">
+                        <QRCodeSVG
+                          value={buildQrData(m)}
+                          size={90}
+                          level="M"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          ))}
         </div>
       )}
     </div>
