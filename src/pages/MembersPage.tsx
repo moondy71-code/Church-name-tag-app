@@ -13,19 +13,27 @@ import { getPositionLabel, normalizePosition } from "@/lib/positions";
 export default function MembersPage() {
   const lang = getLang();
   const [search, setSearch] = useState('');
+  const keyword = search.toLowerCase();
   const [editing, setEditing] = useState<Member | null>(null);
   const [adding, setAdding] = useState(false);
   const i = t();
 
   const members = useLiveQuery(() => db.members.orderBy('name').toArray(), []);
 
-  const filtered = members?.filter(
-    (m) =>
-      m.name.includes(search) ||
-      m.phone.includes(search) ||
-      m.role.includes(search) ||
-      (m.group || '').includes(search)
+ const filtered = members?.filter((m) => {
+  const roleLabel = getPositionLabel(
+    normalizePosition(m.role),
+    lang
+  ).toLowerCase();
+
+  return (
+    m.name.toLowerCase().includes(keyword) ||
+    m.phone.toLowerCase().includes(keyword) ||
+    m.role.toLowerCase().includes(keyword) || // pastor
+    roleLabel.includes(keyword) || // 목사 / Pastor
+    (m.group || "").toLowerCase().includes(keyword)
   );
+});
 
   const handleDelete = async (id: number) => {
     if (confirm(i.confirmDelete)) {
