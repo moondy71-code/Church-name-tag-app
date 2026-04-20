@@ -102,8 +102,8 @@ export interface Translations {
   languageHint: string;
   saveLanguage: string;
   savedLanguage: string;
-  langKorean: string;
-  langEnglish: string;
+  // langKorean: string;
+  // langEnglish: string;
   dataBackupTitle: string;
   dataBackupHint: string;
   exportData: string;
@@ -249,8 +249,8 @@ const ko: Translations = {
   languageHint: "처음에는 기기 언어를 따르고, 필요하면 여기서 바꿀 수 있습니다.",
   saveLanguage: "언어 저장",
   savedLanguage: "언어가 저장되었습니다!",
-  langKorean: "한국어",
-  langEnglish: "영어",
+  // langKorean: "한국어",
+  // langEnglish: "영어",
   dataBackupTitle: "데이터 백업",
   dataBackupHint: "현재 교인, 출석, QR 설정, 앱 설정을 파일로 내보내거나 가져올 수 있습니다.",
   exportData: "데이터 내보내기",
@@ -395,8 +395,8 @@ const en: Translations = {
   languageHint: "The app follows the device language at first, but you can change it here anytime.",
   saveLanguage: "Save Language",
   savedLanguage: "Language saved!",
-  langKorean: "Korean",
-  langEnglish: "English",
+  // langKorean: "Korean",
+  // langEnglish: "English",
   dataBackupTitle: "Data Backup",
   dataBackupHint: "Export or import members, attendance, QR settings, and app settings as a file.",
   exportData: "Export Data",

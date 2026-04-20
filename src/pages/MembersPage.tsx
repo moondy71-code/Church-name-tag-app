@@ -8,8 +8,10 @@ import MemberForm from '@/components/MemberForm';
 import { motion, AnimatePresence } from 'framer-motion';
 import { t, getLang } from '@/lib/i18n';
 import * as XLSX from 'xlsx';
+import { getPositionLabel, normalizePosition } from "@/lib/positions";
 
 export default function MembersPage() {
+  const lang = getLang();
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Member | null>(null);
   const [adding, setAdding] = useState(false);
@@ -39,7 +41,10 @@ const data = members.map((m) => {
   const base = {
     [i.excelBirthDate]: m.birthDate,
     [i.excelPhone]: m.phone,
-    [i.excelRole]: m.role,
+    [i.excelRole]: getPositionLabel(
+      normalizePosition(m.role),
+      getLang()
+    ),
     [i.excelGrade]: m.grade || '',
     [i.excelGroup]: m.group || '',
     [i.excelMemberId]: m.memberId || '',  
@@ -130,7 +135,7 @@ const data = members.map((m) => {
                     <span className="font-semibold">{m.name}</span>
                     {m.role && (
                       <span className="text-xs px-2 py-0.5 rounded-full bg-badge-tag text-badge-tag-foreground">
-                        {m.role}
+                        {getPositionLabel(normalizePosition(m.role), lang)}
                       </span>
                     )}
                   </div>

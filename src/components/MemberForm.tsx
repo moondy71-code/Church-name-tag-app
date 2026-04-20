@@ -9,6 +9,7 @@ import { t, getLang } from '@/lib/i18n';
 import BirthDateInput from '@/components/BirthDateInput';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { generateMemberId } from "@/lib/id";
+import { positionOptions, normalizePosition } from "@/lib/positions";
 
 interface Props {
   member?: Member;
@@ -32,7 +33,7 @@ export default function MemberForm({ member, onSaved, onCancel }: Props) {
     grade: member?.grade || "",
     group: member?.group || "",
     photo: member?.photo || "",
-    role: member?.role || "",
+    role: normalizePosition(member?.role),
     notes: member?.notes || "",
   });
   const fileRef = useRef<HTMLInputElement>(null);
@@ -195,12 +196,27 @@ img.onload = () => {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label>{i.labelRole}</Label>
-            <Select value={form.role} onValueChange={(v) => setForm((f) => ({ ...f, role: v }))}>
-              <SelectTrigger><SelectValue placeholder={i.selectPlaceholder} /></SelectTrigger>
-              <SelectContent>
-                {i.roles.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-              </SelectContent>
-            </Select>
+              <Select
+                value={form.role || "layperson"}
+                onValueChange={(value) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    role: normalizePosition(value),
+                  }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={i.selectPlaceholder} />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {positionOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {lang === "ko" ? option.ko : option.en}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
           </div>
           <div>
             <Label>{i.labelGrade}</Label>

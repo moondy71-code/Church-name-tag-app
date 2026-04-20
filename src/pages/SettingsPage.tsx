@@ -232,7 +232,7 @@ return (
     });
   }}
 >
-  {i.langKorean}
+  한국어
 </Button>
 
 <Button
@@ -253,7 +253,7 @@ return (
     });
   }}
 >
-  {i.langEnglish}
+  English
 </Button>
 </div>
       </div>
