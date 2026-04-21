@@ -34,8 +34,6 @@ export interface QrFieldConfig {
   fields: string[];
 }
 
-  
-
 export interface AppSettings {
   id?: number;
   churchName?: string;
