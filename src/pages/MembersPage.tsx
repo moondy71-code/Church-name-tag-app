@@ -18,7 +18,10 @@ export default function MembersPage() {
   const [adding, setAdding] = useState(false);
   const i = t();
 
-  const members = useLiveQuery(() => db.members.orderBy('name').toArray(), []);
+  const members = useLiveQuery(
+  () => db.members.filter((m) => !m.deleted).sortBy('name'),
+  []
+);
 
   const filtered = members?.filter((m) => {
     const name = (m.name || "").toLowerCase().trim();

@@ -10,6 +10,7 @@ import BirthDateInput from '@/components/BirthDateInput';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { generateMemberId } from "@/lib/id";
 import { positionOptions, normalizePosition } from "@/lib/positions";
+import { capitalizeName } from "@/lib/utils";
 
 interface Props {
   member?: Member;
@@ -132,11 +133,29 @@ img.onload = () => {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label>{i.labelFirstName}</Label>
-            <Input value={form.firstName} onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))} placeholder={i.placeholderFirstName} />
+            <Input 
+              value={form.firstName} 
+              onChange={(e) => 
+                setForm((f) => ({ 
+                  ...f, 
+                  firstName: capitalizeName(e.target.value) 
+                }))
+              } 
+              placeholder={i.placeholderFirstName} 
+            />
           </div>
           <div>
             <Label>{i.labelLastName}</Label>
-            <Input value={form.lastName} onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))} placeholder={i.placeholderLastName} />
+            <Input 
+              value={form.lastName} 
+              onChange={(e) => 
+                setForm((f) => ({ 
+                  ...f, 
+                  lastName: capitalizeName(e.target.value) 
+                }))
+              } 
+              placeholder={i.placeholderLastName} 
+            />
           </div>
         </div>
       <div>
