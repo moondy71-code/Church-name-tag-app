@@ -46,8 +46,12 @@ export default function MembersPage() {
 
   const handleDelete = async (id: number) => {
     if (confirm(i.confirmDelete)) {
-      await db.members.delete(id);
-    }
+      await db.members.update(id, {
+        deleted: true,
+        deletedAt: new Date(),
+        updatedAt: new Date(),
+  });
+}
   };
 
   const exportToExcel = () => {

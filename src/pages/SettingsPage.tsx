@@ -15,14 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Save } from 'lucide-react';
 import { t, getLang, setLang, type Lang } from '@/lib/i18n';
 import { toast } from "sonner";
-
-type BackupData = {
-  version: number;
-  exportedAt: string;
-  members: any[];
-  attendance: any[];
-  settings: any[];
-};
+import { exportAllData, importAndMergeFromFile } from '@/lib/importExport';
 
 export default function SettingsPage() {
   const appSettings = useLiveQuery(() => db.settings.get(1), []);
@@ -102,106 +95,66 @@ const removeGroup = async (index: number) => {
 };
 
 
-  const exportBackup = async () => {
-    const backup: BackupData = {
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      members: await db.members.toArray(),
-      attendance: await db.attendance.toArray(),
-      settings: await db.settings.toArray(),
-    };
+const exportBackup = async () => {
+  const json = await exportAllData();
 
-    const blob = new Blob([JSON.stringify(backup, null, 2)], {
-      type: 'application/json',
-    });
+  const blob = new Blob([json], {
+    type: 'application/json',
+  });
 
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `church-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `church-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
 
-    toast.success (i.exportSuccess);
-  };
+  toast.success(i.exportSuccess);
+};
 
-  const openImportDialog = () => {
-    fileInputRef.current?.click();
-  };
+const openImportDialog = () => {
+  fileInputRef.current?.click();
+};
 
-  const importBackup = async (file: File) => {
-    const text = await file.text();
-    const parsed = JSON.parse(text) as BackupData;
+const importBackup = async (file: File) => {
+  if (!confirm(i.confirmImportOverwrite)) {
+    return;
+  }
 
-    if (
-      !parsed ||
-      !Array.isArray(parsed.members) ||
-      !Array.isArray(parsed.attendance) ||
-      !Array.isArray(parsed.settings)
-    ) {
-      toast.success (i.invalidBackupFile);
-      return;
-    }
+  await importAndMergeFromFile(file);
 
-    if (!confirm(i.confirmImportOverwrite)) {
-      return;
-    }
+  const currentSettings = await db.settings.get(1);
+  if (currentSettings?.language === 'ko' || currentSettings?.language === 'en') {
+    setLang(currentSettings.language);
+    setLanguageState(currentSettings.language);
+  }
 
-    await db.transaction(
-      'rw',
-      db.members,
-      db.attendance,
-      db.settings,
-      async () => {
-        await db.members.clear();
-        await db.attendance.clear();
-        await db.settings.clear();
+  toast.success(i.importSuccess);
+};
 
-        if (parsed.members.length) {
-          await db.members.bulkPut(parsed.members);
-        }
-        if (parsed.attendance.length) {
-          await db.attendance.bulkPut(parsed.attendance);
-        }
+const handleImportFileChange = async (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-        if (parsed.settings.length) {
-          await db.settings.bulkPut(parsed.settings);
-        }
-      }
-    );
+  try {
+    await importBackup(file);
+  } catch (error) {
+    console.error(error);
+    toast.success(i.importFailed);
+  } finally {
+    e.target.value = '';
+  }
+};
 
-    const importedSettings = await db.settings.get(1);
-    if (importedSettings?.language === 'ko' || importedSettings?.language === 'en') {
-      setLang(importedSettings.language);
-    }
-
-    toast.success(i.importSuccess);
-    
-  };
-
-  const handleImportFileChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      await importBackup(file);
-    } catch (error) {
-      console.error(error);
-      toast.success(i.importFailed);
-    } finally {
-      e.target.value = '';
-    }
-  };
-
-  const clearAllData = async () => {
-    if (confirm(i.confirmDeleteAll)) {
-      await db.members.clear();
-      await db.attendance.clear();
-      alert(i.deletedAll);
-    }
-  };
+const clearAllData = async () => {
+  if (confirm(i.confirmDeleteAll)) {
+    await db.members.clear();
+    await db.attendance.clear();
+    alert(i.deletedAll);
+  }
+};
 return (
   <div className="space-y-8 max-w-2xl">
     <div className="flex items-center gap-3">

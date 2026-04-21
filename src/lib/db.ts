@@ -3,10 +3,10 @@ import Dexie, { type Table } from 'dexie';
 export interface Member {
   id?: number;
   memberId?: string;
-  name: string; // computed full name for display/search
+  name: string;
   lastName: string;
   firstName: string;
-  photo?: string; // base64
+  photo?: string;
   birthDate: string;
   phone: string;
   role: string;
@@ -15,13 +15,17 @@ export interface Member {
   gender?: "male" | "female";
   notes?: string;
   customFields?: Record<string, string>;
+
   createdAt: Date;
   updatedAt: Date;
+
+  deleted?: boolean;
+  deletedAt?: Date | null;
 }
 
 export interface AttendanceRecord {
   id?: number;
-  memberId: number;
+  memberId: string;
   memberName: string;
   date: string;
   time: string;

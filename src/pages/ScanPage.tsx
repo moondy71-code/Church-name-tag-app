@@ -102,11 +102,11 @@ const startScan = async () => {
                 });
               } else {
                 await db.attendance.add({
-                  memberId: member.id!,
+                  memberId: member.memberId!,
                   memberName: displayName,
                   date: today,
                   time: format(new Date(), 'HH:mm'),
-                  scannedData: { memberId },
+                  scannedData: { memberId: member.memberId },
                   createdAt: new Date(),
                 });
 
