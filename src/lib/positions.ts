@@ -6,7 +6,8 @@ export type PositionCode =
   | "youth"
   | "student"
   | "newcomer"
-  | "layperson";
+  | "layperson"
+  | "";
 
 export const positionOptions = [
   { value: "pastor" as PositionCode, ko: "목사", en: "Pastor" },
@@ -28,7 +29,7 @@ export function getPositionLabel(
   return language === "ko" ? found.ko : found.en;
 }
 export function normalizePosition(value: string | undefined): PositionCode {
-  if (!value) return "layperson";
+  if (!value) return "";
 
   switch (value) {
     case "목사":
@@ -72,6 +73,6 @@ export function normalizePosition(value: string | undefined): PositionCode {
       return "layperson";
 
     default:
-      return "layperson";
+      return "";
   }
 }

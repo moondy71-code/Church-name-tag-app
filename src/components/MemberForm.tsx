@@ -222,7 +222,7 @@ img.onload = () => {
           <div>
             <Label>{i.labelRole}</Label>
               <Select
-                value={form.role || "layperson"}
+                value={form.role}
                 onValueChange={(value) =>
                   setForm((prev) => ({
                     ...prev,

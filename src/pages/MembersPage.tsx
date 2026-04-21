@@ -47,14 +47,28 @@ export default function MembersPage() {
     );
   });
 
-  const handleDelete = async (id: number) => {
-    if (confirm(i.confirmDelete)) {
-      await db.members.update(id, {
+ const handleDelete = async (id: number) => {
+  if (confirm(i.confirmDelete)) {
+    const member = await db.members.get(id);
+    if (!member) return;
+
+    await db.members.update(id, {
+          name: member.name || "",
+        firstName: "",
+        lastName: "",
+        photo: "",
+        birthDate: "",
+        phone: "",
+        role: "",
+        grade: "",
+        group: "",
+        notes: "",
+        customFields: {},
         deleted: true,
         deletedAt: new Date(),
         updatedAt: new Date(),
-  });
-}
+      });
+    }
   };
 
   const exportToExcel = () => {

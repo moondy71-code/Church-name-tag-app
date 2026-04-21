@@ -17,7 +17,10 @@ function chunkArray<T>(arr: T[], size: number) {
 }
 
 export default function NameTagsPage() {
-  const members = useLiveQuery(() => db.members.orderBy('name').toArray(), []);
+  const members = useLiveQuery(
+      () => db.members.filter((m) => !m.deleted).sortBy('name'),
+      []
+    );
   const qrConfig = useLiveQuery(() => db.qrConfig.toArray(), []);
   const settings = useLiveQuery(() => db.settings.get(1), []); // 🔥 추가
   const [selected, setSelected] = useState<Set<number>>(new Set());
