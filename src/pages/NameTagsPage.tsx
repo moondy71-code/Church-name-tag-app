@@ -57,6 +57,14 @@ export default function NameTagsPage() {
 
   const pagedMembers = chunkArray(selectedMembers, 8);
 
+  const normalizedPages = pagedMembers.map((page) => {
+    const filled = [...page];
+    while (filled.length < 8) {
+      filled.push(null);
+    }
+    return filled;
+  });
+
   return (
     <div className="space-y-6">
       <div className="no-print flex items-center justify-between flex-wrap gap-3">
@@ -123,20 +131,24 @@ export default function NameTagsPage() {
       {/* Printable name tags — 93mm × 62mm, photo left, name + QR right */}
           {selectedMembers.length > 0 && (
         <div className="space-y-4 print:space-y-0">
-          {pagedMembers.map((pageMembers, pageIndex) => (
+          {normalizedPages.map((pageMembers, pageIndex) => (
             <div
               key={pageIndex}
-              className="print-page grid grid-cols-1 sm:grid-cols-2 gap-4 print:grid-cols-2 print:gap-1 print:px-1"
-            >
-              {pageMembers.map((m) => {
-                const isHangulName = /[가-힣]/.test(`${m.lastName || ''}${m.firstName || ''}`);
+              className="print-page grid grid-cols-1 sm:grid-cols-2 gap-4 print:flex print:flex-wrap print:gap-0 print:px-0"
+              >
+          {pageMembers.map((m, slotIndex) => {
+            if (!m) {
+              return <div key={`empty-${pageIndex}-${slotIndex}`} className="badge-slot-empty" />;
+            }
 
-                return (
-                  <div
-                    key={m.id}
-                    className="badge-card bg-card rounded-xl border border-border flex overflow-hidden name-tag-shadow print:break-inside-avoid print:shadow-none print:border print:rounded-lg print:scale-[0.97] origin-top"
-                    style={{ width: '97mm', height: '65mm' }}
-                  >
+            const isHangulName = /[가-힣]/.test(`${m.lastName || ''}${m.firstName || ''}`);
+
+            return (
+              <div
+                key={m.id}
+                className="badge-card bg-card rounded-xl border border-border flex name-tag-shadow print:shadow-none print:border print:rounded-lg print:break-inside-avoid print:overflow-visible"
+                style={{ width: '93mm', height: '61mm', boxSizing: 'border-box' }}
+              >
                     {/* Left: Photo */}
                     <div
                       className="flex-shrink-0 flex items-center justify-center bg-muted"
