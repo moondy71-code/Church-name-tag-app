@@ -13,27 +13,36 @@ import { getPositionLabel, normalizePosition } from "@/lib/positions";
 export default function MembersPage() {
   const lang = getLang();
   const [search, setSearch] = useState('');
-  const keyword = search.toLowerCase();
+  const keyword = search.toLowerCase().trim();
   const [editing, setEditing] = useState<Member | null>(null);
   const [adding, setAdding] = useState(false);
   const i = t();
 
   const members = useLiveQuery(() => db.members.orderBy('name').toArray(), []);
 
- const filtered = members?.filter((m) => {
-  const roleLabel = getPositionLabel(
-    normalizePosition(m.role),
-    lang
-  ).toLowerCase();
+  const filtered = members?.filter((m) => {
+    const name = (m.name || "").toLowerCase().trim();
+    const phone = (m.phone || "").toLowerCase().trim();
+    const roleRaw = (m.role || "").toLowerCase().trim();
+    const roleKo = getPositionLabel(
+      normalizePosition(m.role || ""),
+      "ko"
+    ).toLowerCase().trim();
+    const roleEn = getPositionLabel(
+      normalizePosition(m.role || ""),
+      "en"
+    ).toLowerCase().trim();
+    const group = (m.group || "").toLowerCase().trim();
 
-  return (
-    m.name.toLowerCase().includes(keyword) ||
-    m.phone.toLowerCase().includes(keyword) ||
-    m.role.toLowerCase().includes(keyword) || // pastor
-    roleLabel.includes(keyword) || // 목사 / Pastor
-    (m.group || "").toLowerCase().includes(keyword)
-  );
-});
+    return (
+      name.includes(keyword) ||
+      phone.includes(keyword) ||
+      roleRaw.includes(keyword) ||
+      roleKo.includes(keyword) ||
+      roleEn.includes(keyword) ||
+      group.includes(keyword)
+    );
+  });
 
   const handleDelete = async (id: number) => {
     if (confirm(i.confirmDelete)) {

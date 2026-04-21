@@ -234,7 +234,7 @@ export default function NameTagsPage() {
 
                         {m.role && (
                           <div className="text-lg text-accent font-semibold mt-2 text-center">
-                            {m.role}
+                            {getPositionLabel(normalizePosition(m.role), lang)}
                           </div>
                         )}
                       </div>
