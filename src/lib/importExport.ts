@@ -102,10 +102,13 @@ export async function importAndMergeFromText(jsonText: string) {
     throw new Error("Invalid import file");
   }
 
-  const importedMembers = parsed.members.filter((m) => m.memberId);
-  const importedAttendance = parsed.attendance.filter(
-    (a) => a.memberId && a.date
-  );
+  const importedMembers = parsed.members
+    .filter((m) => m.memberId)
+    .map(({ id, ...rest }: any) => rest as Member);
+
+  const importedAttendance = parsed.attendance
+    .filter((a) => a.memberId && a.date)
+    .map(({ id, ...rest }: any) => rest as AttendanceRecord);
 
   await db.transaction("rw", db.members, db.attendance, async () => {
     const localMembers = await db.members.toArray();
@@ -114,8 +117,45 @@ export async function importAndMergeFromText(jsonText: string) {
     const mergedMembers = mergeMembers(localMembers, importedMembers);
     const mergedAttendance = mergeAttendance(localAttendance, importedAttendance);
 
-    await db.members.bulkPut(mergedMembers);
-    await db.attendance.bulkPut(mergedAttendance);
+    const localMemberMap = new Map<string, Member>();
+    for (const m of localMembers) {
+      if (m.memberId) {
+        localMemberMap.set(m.memberId, m);
+      }
+    }
+
+    const localAttendanceMap = new Map<string, AttendanceRecord>();
+    for (const a of localAttendance) {
+      if (a.memberId && a.date) {
+        localAttendanceMap.set(`${a.memberId}__${a.date}`, a);
+      }
+    }
+
+    const membersToSave = mergedMembers.map((m) => {
+      const existing = m.memberId ? localMemberMap.get(m.memberId) : undefined;
+
+      if (existing?.id != null) {
+        return { ...m, id: existing.id };
+      }
+
+      const { id, ...rest } = m as any;
+      return rest as Member;
+    });
+
+    const attendanceToSave = mergedAttendance.map((a) => {
+      const key = `${a.memberId}__${a.date}`;
+      const existing = localAttendanceMap.get(key);
+
+      if (existing?.id != null) {
+        return { ...a, id: existing.id };
+      }
+
+      const { id, ...rest } = a as any;
+      return rest as AttendanceRecord;
+    });
+
+    await db.members.bulkPut(membersToSave);
+    await db.attendance.bulkPut(attendanceToSave);
   });
 
   return {
@@ -123,7 +163,6 @@ export async function importAndMergeFromText(jsonText: string) {
     mergedAttendance: importedAttendance.length,
   };
 }
-
 export async function importAndMergeFromFile(file: File) {
   const text = await file.text();
   return importAndMergeFromText(text);

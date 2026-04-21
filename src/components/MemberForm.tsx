@@ -226,15 +226,19 @@ img.onload = () => {
                 onValueChange={(value) =>
                   setForm((prev) => ({
                     ...prev,
-                    role: normalizePosition(value),
+                    role: value === "none" ? "" : normalizePosition(value),
                   }))
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={i.selectPlaceholder} />
+                  <SelectValue placeholder={i.placeholderRole} />
                 </SelectTrigger>
 
                 <SelectContent>
+                  <SelectItem value="none">
+                    {i.none}
+                  </SelectItem>
+
                   {positionOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {lang === "ko" ? option.ko : option.en}

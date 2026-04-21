@@ -141,6 +141,8 @@ export interface Translations {
   memberIdPrefix: string;
   prefixPlaceholder: string;
   prefixDescription: string;
+  none: string;
+  placeholderRole: string;
 
 
 };
@@ -288,6 +290,8 @@ const ko: Translations = {
   memberIdPrefix: "고유 ID 앞자리",
   prefixPlaceholder: "예: MyChurch",
   prefixDescription: "고유 ID 앞에 붙는 이름을 정하세요 (예: MyChurch0001)",
+  none: "없음",
+  placeholderRole: "직분 선택",
   
 };
 
@@ -434,6 +438,8 @@ const en: Translations = {
   memberIdPrefix: "ID Prefix",
   prefixPlaceholder: "e.g. MyChurch",
   prefixDescription: "Set the name that comes before the ID (e.g. MyChurch0001)",
+  none: "None",
+  placeholderRole: "Select role",
 
 };
 
