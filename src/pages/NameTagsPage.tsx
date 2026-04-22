@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, type Member } from '@/lib/db';
 import { QRCodeSVG } from 'qrcode.react';
@@ -6,6 +5,8 @@ import { Printer, Check, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { t } from '@/lib/i18n';
 import { getPositionLabel, normalizePosition } from "@/lib/positions";
+import * as htmlToImage from "html-to-image";
+import React, { useState, useEffect } from "react";
 import { getLang } from "@/lib/i18n";
 
 function chunkArray<T>(arr: T[], size: number) {
@@ -141,119 +142,145 @@ export default function NameTagsPage() {
               >
           {pageMembers.map((m, slotIndex) => {
             if (!m) {
-              return <div key={`empty-${pageIndex}-${slotIndex}`} className="badge-slot-empty" />;
+              return (
+                <div
+                  key={`empty-${pageIndex}-${slotIndex}`}
+                  className="badge-slot-empty"
+                />
+              );
             }
 
-            const isHangulName = /[가-힣]/.test(`${m.lastName || ''}${m.firstName || ''}`);
+            const ref = React.createRef<HTMLDivElement>();
+            const isHangulName = /[가-힣]/.test(`${m.lastName || ""}${m.firstName || ""}`);
 
             return (
               <div
+                ref={ref}
                 key={m.id}
-                className="badge-card bg-card rounded-xl border border-border flex name-tag-shadow print:shadow-none print:border print:rounded-lg print:break-inside-avoid print:overflow-visible"
-                style={{ width: '93mm', height: '61mm', boxSizing: 'border-box' }}
+                className="badge-card relative bg-card rounded-xl border border-border flex overflow-hidden name-tag-shadow print:break-inside-avoid print:shadow-none print:border print:rounded-lg print:scale-[0.97] origin-top"
+                style={{ width: "97mm", height: "65mm" }}
               >
-                    {/* Left: Photo */}
+                {/* Left: Photo */}
+                <div
+                  className="flex-shrink-0 flex items-center justify-center bg-muted"
+                  style={{ width: "40mm", height: "60mm", padding: "3mm 2mm 0mm 2mm" }}
+                >
+                  {m.photo ? (
+                    <img
+                      src={m.photo}
+                      alt={m.name}
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        width: "auto",
+                        height: "auto",
+                        display: "block",
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-muted-foreground">
+                      {m.name?.[0] || ""}
+                    </div>
+                  )}
+                </div>
+
+                {/* Right side */}
+                <div className="flex-1 flex flex-col justify-between p-3 min-w-0">
+                  <div className="flex flex-col items-center text-center">
                     <div
-                      className="flex-shrink-0 flex items-center justify-center bg-muted"
-                      style={{ width: '40mm', height: '60mm', padding: '3mm 2mm 0mm 2mm' }}
+                      className="uppercase text-muted-foreground w-full"
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: 600,
+                        letterSpacing: "0.08em",
+                      }}
                     >
-                      {m.photo ? (
-                        <img
-                          src={m.photo}
-                          alt={m.name}
+                      {settings?.churchName?.trim() || i.churchName}
+                    </div>
+
+                    <div className="w-full flex flex-col items-center justify-center mt-1">
+                      {isHangulName ? (
+                        <div
                           style={{
-                            maxWidth: '100%',
-                            maxHeight: '100%',
-                            width: 'auto',
-                            height: 'auto',
-                            display: 'block',
+                            fontSize: "clamp(28px, 7vw, 44px)",
+                            fontWeight: 800,
+                            lineHeight: 1.05,
+                            width: "100%",
+                            textAlign: "center",
+                            whiteSpace: "nowrap",
                           }}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-3xl font-bold text-muted-foreground">
-                          {m.name?.[0] || ''}
+                        >
+                          {`${m.lastName || ""}${m.firstName || ""}`}
                         </div>
+                      ) : (
+                        <>
+                          <div
+                            style={{
+                              fontSize: "clamp(22px, 4vw, 36px)",
+                              fontWeight: 800,
+                              lineHeight: 1.0,
+                              marginBottom: '2px',
+                            }}
+                          >
+                            {m.firstName || "\u00A0"}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "clamp(18px, 3.5vw, 28px)",
+                              fontWeight: 800,
+                              lineHeight: 1.0,
+                            }}
+                          >
+                            {m.lastName || "\u00A0"}
+                          </div>
+                        </>
                       )}
                     </div>
 
-                    {/* Right: Name top, QR bottom */}
-                    <div className="flex-1 flex flex-col justify-between p-3 min-w-0">
-                      <div className="flex flex-col items-center text-center">
-                        <div
-                          className="uppercase text-muted-foreground w-full"
-                          style={{
-                            fontSize: '14px',
-                            fontWeight: 600,
-                            letterSpacing: '0.08em',
-                          }}
-                        >
-                          {settings?.churchName?.trim() || i.churchName}
-                        </div>
-
-                        <div className="w-full flex flex-col items-center justify-center mt-1">
-                          {isHangulName ? (
-                            <div
-                              style={{
-                                fontSize: 'clamp(28px, 7vw, 44px)',
-                                fontWeight: 800,
-                                lineHeight: 1.05,
-                                width: '100%',
-                                textAlign: 'center',
-                                whiteSpace: 'nowrap',
-                              }}
-                            >
-                              {`${m.lastName || ''}${m.firstName || ''}`}
-                            </div>
-                          ) : (
-                            <>
-                              <div
-                                style={{
-                                  fontSize: 'clamp(22px, 4vw, 36px)',
-                                  fontWeight: 800,
-                                  lineHeight: 1.05,
-                                  width: '100%',
-                                  textAlign: 'center',
-                                  whiteSpace: 'nowrap',
-                                }}
-                              >
-                                {m.firstName || '\u00A0'}
-                              </div>
-
-                              <div
-                                style={{
-                                  fontSize: 'clamp(18px, 3.5vw, 28px)',
-                                  fontWeight: 800,
-                                  lineHeight: 1.05,
-                                  width: '100%',
-                                  textAlign: 'center',
-                                  whiteSpace: 'nowrap',
-                                }}
-                              >
-                                {m.lastName || '\u00A0'}
-                              </div>
-                            </>
-                          )}
-                        </div>
-
-                        {m.role && (
-                          <div className="text-lg text-accent font-semibold mt-2 text-center">
-                            {getPositionLabel(normalizePosition(m.role), lang)}
-                          </div>
-                        )}
+                    {m.role && (
+                      <div className="text-lg text-accent font-semibold mt-2 text-center">
+                        {getPositionLabel(normalizePosition(m.role), lang)}
                       </div>
-
-                      {/* Bottom: QR */}
-                      <div className="flex justify-center">
-                        <QRCodeSVG
-                          value={buildQrData(m)}
-                          size={90}
-                          level="M"
-                        />
-                      </div>
-                    </div>
+                    )}
                   </div>
-                );
-              })}
+
+                  {/* QR */}
+                  <div className="flex justify-center">
+                    <QRCodeSVG
+                      value={buildQrData(m)}
+                      size={90}
+                      level="M"
+                    />
+                  </div>
+                </div>
+
+                {/* ✅ PNG 버튼 (여기가 핵심 위치) */}
+                <button
+                  onClick={async () => {
+                    if (!ref.current) return;
+
+                    const button = ref.current.querySelector(".download-btn") as HTMLElement;
+
+                    if (button) button.style.display = "none";
+
+                    const dataUrl = await htmlToImage.toPng(ref.current, {
+                      pixelRatio: 1,
+                    });
+
+                    if (button) button.style.display = "block";
+
+                    const link = document.createElement("a");
+                    link.download = `${m.name}.png`;
+                    link.href = dataUrl;
+                    link.click();
+                  }}
+                  className="download-btn no-print absolute bottom-2 right-2 text-xs bg-blue-500 text-white px-2 py-1 rounded shadow"
+                >
+                  PNG 저장
+                </button>
+              </div>
+            );
+          })}
             </div>
           ))}
         </div>
