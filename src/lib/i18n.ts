@@ -1,3 +1,5 @@
+import strict from "assert/strict";
+
 export interface Translations {
   appName: string;
   navMembers: string;
@@ -143,6 +145,9 @@ export interface Translations {
   prefixDescription: string;
   none: string;
   placeholderRole: string;
+  savePrefix: string;
+  invalidPrefix: string;
+  prefixSaved: string;
 
 
 };
@@ -292,7 +297,10 @@ const ko: Translations = {
   prefixDescription: "고유 ID 앞에 붙는 이름을 정하세요 (예: MyChurch0001)",
   none: "없음",
   placeholderRole: "직분 선택",
-  
+  savePrefix: "확인",
+  invalidPrefix: "Prefix를 입력해 주세요.",
+  prefixSaved: "Prefix가 저장되었습니다.",
+
 };
 
 const en: Translations = {
@@ -440,6 +448,9 @@ const en: Translations = {
   prefixDescription: "Set the name that comes before the ID (e.g. MyChurch0001)",
   none: "None",
   placeholderRole: "Select role",
+  savePrefix: "Save",
+  invalidPrefix: "Please enter a prefix.",
+  prefixSaved: "Prefix has been saved.",
 
 };
 

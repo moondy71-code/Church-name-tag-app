@@ -62,7 +62,28 @@ export default function SettingsPage() {
 
     toast.success(i.savedChurchName);
   };
-const addGroup = async () => {
+  const savePrefix = async () => {
+  const cleanPrefix = prefix.trim();
+
+  if (!cleanPrefix) {
+    toast.success(i.invalidPrefix);
+    return;
+  }
+
+  await db.settings.put({
+    ...appSettings,
+    id: 1,
+    churchName: appSettings?.churchName || '',
+    language: appSettings?.language || getLang(),
+    groups: appSettings?.groups || [],
+    memberIdPrefix: cleanPrefix,
+    memberIdNextNumber: appSettings?.memberIdNextNumber || 1,
+  });
+
+  toast.success(i.prefixSaved);
+};
+
+  const addGroup = async () => {
   const value = newGroup.trim();
   if (!value) return;
 
@@ -231,13 +252,18 @@ return (
 <div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
  <h2 className="font-bold">{i.memberIdPrefix}</h2>
 
-<Input
-  value={prefix}
-  onChange={(e) =>
-    setPrefix(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))
-  }
-  placeholder={i.prefixPlaceholder}
-/>
+<div className="flex gap-2">
+  <Input
+    value={prefix}
+    onChange={(e) =>
+      setPrefix(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))
+    }
+    placeholder={i.prefixPlaceholder}
+  />
+  <Button type="button" onClick={savePrefix}>
+    {i.savePrefix}
+  </Button>
+</div>
 
 <p className="text-xs text-muted-foreground">
   {i.prefixDescription}
