@@ -184,7 +184,7 @@ img.onload = () => {
           </label>
         </div>
       </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <Label>{i.labelBirthDate}</Label>
             <BirthDateInput value={form.birthDate} onChange={(v) => setForm((f) => ({ ...f, birthDate: v }))} />
