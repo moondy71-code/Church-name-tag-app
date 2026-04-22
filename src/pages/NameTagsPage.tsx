@@ -5,8 +5,8 @@ import { Printer, Check, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { t } from '@/lib/i18n';
 import { getPositionLabel, normalizePosition } from "@/lib/positions";
+import React, { useEffect, useState } from "react";
 import * as htmlToImage from "html-to-image";
-import React, { useState, useEffect } from "react";
 import { getLang } from "@/lib/i18n";
 
 function chunkArray<T>(arr: T[], size: number) {
@@ -24,7 +24,24 @@ export default function NameTagsPage() {
     );
   const qrConfig = useLiveQuery(() => db.qrConfig.toArray(), []);
   const settings = useLiveQuery(() => db.settings.get(1), []); // 🔥 추가
-  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [selected, setSelected] = useState(new Set());
+  const [search, setSearch] = useState("");
+
+  const [fontEmbedCss, setFontEmbedCss] = useState("");
+
+  useEffect(() => {
+    const loadFontCss = async () => {
+      try {
+        const css = await htmlToImage.getFontEmbedCSS(document.body);
+        setFontEmbedCss(css);
+      } catch (e) {
+        console.error("font css load failed", e);
+      }
+    };
+
+    loadFontCss();
+  }, []);
+
   const lang = getLang();
   const i = t();
       useEffect(() => {
@@ -264,7 +281,8 @@ export default function NameTagsPage() {
                     if (button) button.style.display = "none";
 
                     const dataUrl = await htmlToImage.toPng(ref.current, {
-                      pixelRatio: 1,
+                      pixelRatio: 1.5,
+                      fontEmbedCSS: fontEmbedCss || undefined,
                     });
 
                     if (button) button.style.display = "block";
