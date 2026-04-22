@@ -179,7 +179,7 @@ export default function NameTagsPage() {
               >
                 {/* Left: Photo */}
                 <div
-                  className="flex-shrink-0 flex items-center justify-center bg-muted"
+                  className="flex-shrink-0 flex items-center justify-center bg-white"
                   style={{ width: "40mm", height: "60mm", padding: "3mm 2mm 0mm 2mm" }}
                 >
                   {m.photo ? (
@@ -276,25 +276,26 @@ export default function NameTagsPage() {
                   onClick={async () => {
                     if (!ref.current) return;
 
-                    const button = ref.current.querySelector(".download-btn") as HTMLElement;
+                    const button = ref.current.querySelector(".download-btn") as HTMLElement | null;
+                    if (button) button.style.visibility = "hidden";
 
-                    if (button) button.style.display = "none";
+                    try {
+                      const dataUrl = await htmlToImage.toPng(ref.current, {
+                        pixelRatio: 1.5,
+                        fontEmbedCSS: fontEmbedCss || undefined,
+                      });
 
-                    const dataUrl = await htmlToImage.toPng(ref.current, {
-                      pixelRatio: 1.5,
-                      fontEmbedCSS: fontEmbedCss || undefined,
-                    });
-
-                    if (button) button.style.display = "block";
-
-                    const link = document.createElement("a");
-                    link.download = `${m.name}.png`;
-                    link.href = dataUrl;
-                    link.click();
+                      const link = document.createElement("a");
+                      link.download = `${m.name}.png`;
+                      link.href = dataUrl;
+                      link.click();
+                    } finally {
+                      if (button) button.style.visibility = "visible";
+                    }
                   }}
                   className="download-btn no-print absolute bottom-2 right-2 text-xs bg-blue-500 text-white px-2 py-1 rounded shadow"
                 >
-                  PNG 저장
+                  {i.savePng}
                 </button>
               </div>
             );

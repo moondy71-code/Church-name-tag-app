@@ -148,7 +148,7 @@ export interface Translations {
   savePrefix: string;
   invalidPrefix: string;
   prefixSaved: string;
-
+  savePng: string;
 
 };
 
@@ -300,6 +300,7 @@ const ko: Translations = {
   savePrefix: "확인",
   invalidPrefix: "Prefix를 입력해 주세요.",
   prefixSaved: "Prefix가 저장되었습니다.",
+  savePng: "PNG 저장",
 
 };
 
@@ -451,6 +452,7 @@ const en: Translations = {
   savePrefix: "Save",
   invalidPrefix: "Please enter a prefix.",
   prefixSaved: "Prefix has been saved.",
+  savePng: "Save PNG",
 
 };
 
