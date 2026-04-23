@@ -213,7 +213,7 @@ return (
       churchName: appSettings?.churchName || "",
       language: "ko",
       groups: appSettings?.groups || [],
-      memberIdPrefix: prefix.trim() || "Moon",
+      memberIdPrefix: prefix.trim() || "MyChurch",
       memberIdNextNumber: appSettings?.memberIdNextNumber || 1,
     });
   }}
