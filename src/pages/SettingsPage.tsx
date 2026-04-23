@@ -16,6 +16,12 @@ import { Save } from 'lucide-react';
 import { t, getLang, setLang, type Lang } from '@/lib/i18n';
 import { toast } from "sonner";
 import { exportAllData, importAndMergeFromFile } from '@/lib/importExport';
+import { useNavigate } from "react-router-dom";
+import { BookOpen } from "lucide-react";
+import { Globe } from "lucide-react";
+import { Building } from "lucide-react";
+import { Hash } from "lucide-react";
+import { Users } from "lucide-react";
 
 export default function SettingsPage() {
   const appSettings = useLiveQuery(() => db.settings.get(1), []);
@@ -25,6 +31,7 @@ export default function SettingsPage() {
   const [newGroup, setNewGroup] = useState('');
   const [language, setLanguageState] = useState<Lang>(getLang());
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
   const i = t();
 
 
@@ -183,9 +190,13 @@ return (
       <h1 className="text-2xl font-bold">{i.settingsTitle}</h1>
     </div>
 
-    <div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
-      <h2 className="font-bold">{i.languageLabel}</h2>
-      <p className="text-sm text-muted-foreground">{i.languageHint}</p>
+<div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
+  <div className="flex items-center gap-2">
+    <Globe className="w-5 h-5 text-primary" />
+    <h2 className="font-bold">{i.languageLabel}</h2>
+  </div>
+
+  <p className="text-sm text-muted-foreground">{i.languageHint}</p>
 
       <div className="flex gap-3">
  <div className="flex gap-3">
@@ -235,9 +246,15 @@ return (
 
     </div>
 
-    <div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
-      <h2 className="font-bold">{i.churchNameLabel}</h2>
-      <p className="text-sm text-muted-foreground">{i.churchNameHint}</p>
+<div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
+  <div className="flex items-center gap-2">
+    <Building className="w-5 h-5 text-primary" />
+    <h2 className="font-bold">{i.churchNameLabel}</h2>
+  </div>
+
+  <p className="text-sm text-muted-foreground">
+    {i.churchNameHint}
+  </p>
 
       <Input
         value={churchName}
@@ -248,9 +265,12 @@ return (
       <Button onClick={saveChurchName} className="gap-2">
         <Save className="w-4 h-4" /> {i.saveChurchName}
       </Button>
-    </div>
-<div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
- <h2 className="font-bold">{i.memberIdPrefix}</h2>
+   </div>
+   <div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
+<div className="flex items-center gap-2">
+  <Hash className="w-5 h-5 text-primary" />
+  <h2 className="font-bold">{i.memberIdPrefix}</h2>
+</div>
 
 <div className="flex gap-2">
   <Input
@@ -271,7 +291,10 @@ return (
 </div>
     <div className="bg-card rounded-xl p-6 name-tag-shadow space-y-4">
 
-      <h2 className="font-bold">{i.groups}</h2>
+      <div className="flex items-center gap-2">
+  <Users className="w-5 h-5 text-primary" />
+  <h2 className="font-bold">{i.groups}</h2>
+</div>
 
       <div className="flex gap-2">
         <Input
@@ -331,7 +354,25 @@ return (
         className="hidden"
       />
     </div>
+    {/* 📘 사용설명서 */}
+    <div className="bg-card rounded-xl p-6 border space-y-4">
+      <div className="flex items-center gap-2">
+        <BookOpen className="w-5 h-5 text-primary" />
+        <h2 className="font-bold">
+          {getLang() === "en" ? "Help & Guide" : "사용설명서"}
+        </h2>
+      </div>
 
+      <p className="text-sm text-muted-foreground">
+        {getLang() === "en"
+          ? "Learn how to use the app and its main features."
+          : "앱 사용 방법과 주요 기능을 확인할 수 있습니다."}
+      </p>
+
+      <Button onClick={() => navigate("/help")} className="w-full">
+        {getLang() === "en" ? "View User Guide" : "사용설명서 보기"}
+      </Button>
+    </div>
     <div className="bg-destructive/5 rounded-xl p-6 border border-destructive/20 space-y-4">
       <div className="flex items-center gap-2 text-destructive">
         <AlertTriangle className="w-5 h-5" />
