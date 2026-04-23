@@ -6,6 +6,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type CardVariant = "default" | "warning" | "danger";
 
@@ -23,17 +26,29 @@ function getCardClasses(variant: CardVariant = "default") {
 export default function HelpPage() {
   const lang = getLang() === "en" ? "en" : "ko";
   const content = helpContent[lang];
+  const navigate = useNavigate();
 
   return (
     <div className="mx-auto max-w-4xl p-4 sm:p-6 space-y-6">
-      <div className="space-y-3">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          {content.pageTitle}
-        </h1>
-        <p className="text-sm sm:text-base text-muted-foreground leading-7">
-          {content.intro}
-        </p>
-      </div>
+    <div className="space-y-3">
+  <Button
+    type="button"
+    variant="outline"
+    onClick={() => navigate("/")}
+    className="gap-2"
+  >
+    <ArrowLeft className="w-4 h-4" />
+    {lang === "en" ? "Back" : "돌아가기"}
+  </Button>
+
+  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+    {content.pageTitle}
+  </h1>
+
+  <p className="text-sm sm:text-base text-muted-foreground leading-7">
+    {content.intro}
+  </p>
+</div>
 
       <Accordion type="single" collapsible className="w-full space-y-3">
         {content.sections.map((section) => (

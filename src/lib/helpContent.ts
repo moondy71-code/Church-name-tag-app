@@ -31,13 +31,13 @@ export const helpContent: Record<"ko" | "en", HelpContent> = {
           {
             title: "Windows / Android",
             description: [
-              "Chrome 브라우저에서 접속 후 [홈 화면에 추가] 또는 [설치]를 눌러 저장할 수 있습니다.",
+              "Chrome 브라우저에서 접속 후 [홈 화면에 추가] 또는 [설치]를 눌러 인터넷 없이 사용할 수 있습니다.",
             ],
           },
           {
             title: "Apple (iPhone / iPad)",
             description: [
-              "Safari 브라우저에서 접속 후 [공유] 버튼 → [홈 화면에 추가]를 누르면 됩니다.",
+              "Safari 브라우저에서 접속 후 [공유] 버튼 → [홈 화면에 추가]를 눌러 인터넷 없이 사용할 수 있습니다.",
             ],
           },
           {
@@ -150,13 +150,13 @@ export const helpContent: Record<"ko" | "en", HelpContent> = {
           {
             title: "Windows / Android",
             description: [
-              "Open the program in Chrome and click [Add to Home Screen] or [Install].",
+              "Open in Chrome and tap [Install] or [Add to Home Screen]. Enjoy full offline access to the program whenever you're off the grid.",
             ],
           },
           {
             title: "Apple (iPhone / iPad)",
             description: [
-              "Open the program in Safari, tap [Share], then select [Add to Home Screen].",
+              "Open in Safari, tap [Share], then [Add to Home Screen]. Enjoy full offline access to the program whenever you're off the grid.",
             ],
           },
           {
