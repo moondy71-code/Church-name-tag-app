@@ -96,7 +96,7 @@ export interface Translations {
   churchNameLabel: string;
   churchNameHint: string;
   churchNamePlaceholder: string;
-  saveChurchName: string; 
+  saveChurchName: string;
   saveQrSettings: string;
   savedChurchName: string;
   savedQrSettings: string;
@@ -119,7 +119,7 @@ export interface Translations {
   excelSummarySheet: string;
   excelAttendanceCount: string;
   excelFullYearFile: string;
-  back: string; 
+  back: string;
   scanHubDescription: string;
   professionalScanner: string;
   professionalScannerDescription: string;
@@ -149,6 +149,10 @@ export interface Translations {
   invalidPrefix: string;
   prefixSaved: string;
   savePng: string;
+  lastGoogleBackup: string;
+  lastGoogleImport: string;
+  googleBackup: string;
+  googleImport: string;
 
 };
 
@@ -301,6 +305,10 @@ const ko: Translations = {
   invalidPrefix: "Prefix를 입력해 주세요.",
   prefixSaved: "Prefix가 저장되었습니다.",
   savePng: "PNG 저장",
+  lastGoogleBackup: "마지막 Google 저장",
+  lastGoogleImport: "마지막 Google 불러오기",
+  googleBackup: "Google Drive로 저장",
+  googleImport: "Google Drive에서 불러오기",
 
 };
 
@@ -453,6 +461,10 @@ const en: Translations = {
   invalidPrefix: "Please enter a prefix.",
   prefixSaved: "Prefix has been saved.",
   savePng: "Save PNG",
+  lastGoogleBackup: "Last Google Backup",
+  lastGoogleImport: "Last Google Import",
+  googleBackup: "Save to Google Drive",
+  googleImport: "Load from Google Drive",
 
 };
 
@@ -466,7 +478,7 @@ function detectLanguage(): Lang {
   try {
     const saved = localStorage.getItem(LANG_STORAGE_KEY);
     if (saved === 'ko' || saved === 'en') return saved;
-  } catch {}
+  } catch { }
 
   const lang = navigator.language || (navigator as any).userLanguage || 'en';
   return lang.startsWith('ko') ? 'ko' : 'en';
@@ -482,7 +494,7 @@ export function setLang(lang: Lang) {
   currentLang = lang;
   try {
     localStorage.setItem(LANG_STORAGE_KEY, lang);
-  } catch {}
+  } catch { }
 }
 
 export function t(): Translations {
