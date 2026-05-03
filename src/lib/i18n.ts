@@ -153,6 +153,7 @@ export interface Translations {
   lastGoogleImport: string;
   googleBackup: string;
   googleImport: string;
+  importResult: string;
 
 };
 
@@ -309,6 +310,7 @@ const ko: Translations = {
   lastGoogleImport: "마지막 Google 불러오기",
   googleBackup: "Google Drive로 저장",
   googleImport: "Google Drive에서 불러오기",
+  importResult: "가져오기 완료: 새 교인 {{newMembers}}명, 업데이트 {{updatedMembers}}명, 새 출석 {{newAttendance}}개",
 
 };
 
@@ -465,6 +467,7 @@ const en: Translations = {
   lastGoogleImport: "Last Google Import",
   googleBackup: "Save to Google Drive",
   googleImport: "Load from Google Drive",
+  importResult: "Import complete: {{newMembers}} new members, {{updatedMembers}} updated, {{newAttendance}} new attendance",
 
 };
 

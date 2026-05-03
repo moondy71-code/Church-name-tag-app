@@ -213,7 +213,7 @@ export default function SettingsPage() {
       const text =
         typeof data === "string" ? data : JSON.stringify(data);
 
-      await importAndMergeFromText(text);
+      const result = await importAndMergeFromText(text);
 
       const now = new Date().toISOString();
       setLastGoogleImport(now);
@@ -224,7 +224,14 @@ export default function SettingsPage() {
         setLanguageState(currentSettings.language);
       }
 
-      toast.success("Google Drive 불러오기 완료");
+      toast.success(
+        i.importResult
+          .replace("{{newMembers}}", String(result.newMembers))
+          .replace("{{updatedMembers}}", String(result.updatedMembers))
+          .replace("{{newAttendance}}", String(result.newAttendance))
+      );
+
+
     } catch (e) {
       console.error(e);
       toast.error("Google Drive 불러오기 실패");

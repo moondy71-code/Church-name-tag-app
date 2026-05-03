@@ -110,18 +110,21 @@ export async function importAndMergeFromText(jsonText: string) {
     .filter((a) => a.memberId && a.date)
     .map(({ id, ...rest }: any) => rest as AttendanceRecord);
 
+  const result = {
+    newMembers: 0,
+    updatedMembers: 0,
+    skippedMembers: 0,
+    newAttendance: 0,
+    skippedAttendance: 0,
+  };
+
   await db.transaction("rw", db.members, db.attendance, async () => {
     const localMembers = await db.members.toArray();
     const localAttendance = await db.attendance.toArray();
 
-    const mergedMembers = mergeMembers(localMembers, importedMembers);
-    const mergedAttendance = mergeAttendance(localAttendance, importedAttendance);
-
     const localMemberMap = new Map<string, Member>();
     for (const m of localMembers) {
-      if (m.memberId) {
-        localMemberMap.set(m.memberId, m);
-      }
+      if (m.memberId) localMemberMap.set(m.memberId, m);
     }
 
     const localAttendanceMap = new Map<string, AttendanceRecord>();
@@ -131,38 +134,63 @@ export async function importAndMergeFromText(jsonText: string) {
       }
     }
 
-    const membersToSave = mergedMembers.map((m) => {
-      const existing = m.memberId ? localMemberMap.get(m.memberId) : undefined;
+    const membersToSave: Member[] = [];
 
-      if (existing?.id != null) {
-        return { ...m, id: existing.id };
+    for (const imported of importedMembers) {
+      if (!imported.memberId) continue;
+
+      const existing = localMemberMap.get(imported.memberId);
+
+      if (!existing) {
+        const { id, ...rest } = imported as any;
+        membersToSave.push(rest as Member);
+        result.newMembers++;
+        continue;
       }
 
-      const { id, ...rest } = m as any;
-      return rest as Member;
-    });
+      const existingTime = toTime(existing.updatedAt);
+      const importedTime = toTime(imported.updatedAt);
 
-    const attendanceToSave = mergedAttendance.map((a) => {
-      const key = `${a.memberId}__${a.date}`;
+      if (importedTime > existingTime) {
+        membersToSave.push({
+          ...imported,
+          id: existing.id,
+        });
+        result.updatedMembers++;
+      } else {
+        result.skippedMembers++;
+      }
+    }
+
+    const attendanceToSave: AttendanceRecord[] = [];
+
+    for (const imported of importedAttendance) {
+      if (!imported.memberId || !imported.date) continue;
+
+      const key = `${imported.memberId}__${imported.date}`;
       const existing = localAttendanceMap.get(key);
 
-      if (existing?.id != null) {
-        return { ...a, id: existing.id };
+      if (!existing) {
+        const { id, ...rest } = imported as any;
+        attendanceToSave.push(rest as AttendanceRecord);
+        result.newAttendance++;
+      } else {
+        result.skippedAttendance++;
       }
+    }
 
-      const { id, ...rest } = a as any;
-      return rest as AttendanceRecord;
-    });
+    if (membersToSave.length > 0) {
+      await db.members.bulkPut(membersToSave);
+    }
 
-    await db.members.bulkPut(membersToSave);
-    await db.attendance.bulkPut(attendanceToSave);
+    if (attendanceToSave.length > 0) {
+      await db.attendance.bulkPut(attendanceToSave);
+    }
   });
 
-  return {
-    mergedMembers: importedMembers.length,
-    mergedAttendance: importedAttendance.length,
-  };
+  return result;
 }
+
 export async function importAndMergeFromFile(file: File) {
   const text = await file.text();
   return importAndMergeFromText(text);
