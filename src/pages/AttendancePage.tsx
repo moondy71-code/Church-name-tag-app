@@ -10,6 +10,7 @@ import { t } from '@/lib/i18n';
 
 export default function AttendancePage() {
   const [dateFilter, setDateFilter] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [nameSearch, setNameSearch] = useState("");
   const i = t();
 
   const records = useLiveQuery(
@@ -20,6 +21,12 @@ export default function AttendancePage() {
   const members = useLiveQuery(() => db.members.toArray(), []);
 
   const allAttendance = useLiveQuery(() => db.attendance.toArray(), []);
+
+  const searchedAttendance = (allAttendance || []).filter((r) =>
+    (r.memberName || "")
+      .toLowerCase()
+      .includes(nameSearch.toLowerCase().trim())
+  );
 
   const attendanceDates = Array.from(
     new Set((allAttendance || []).map((r) => r.date))
@@ -173,24 +180,38 @@ export default function AttendancePage() {
         <Input
           type="date"
           value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value)}
+          onChange={(e) => {
+            setDateFilter(e.target.value);
+            setNameSearch("");
+          }}
           className="w-auto"
         />
         <span className="text-sm text-muted-foreground">
           {i.attendanceCount(records?.length || 0)}
         </span>
       </div>
+      <div className="flex items-center gap-2">
+        <Input
+          placeholder={i.searchAttendanceByName}
+          value={nameSearch}
+          onChange={(e) => setNameSearch(e.target.value)}
+          className="max-w-xs"
+        />
+      </div>
 
       {attendanceDates.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex max-h-28 flex-wrap gap-2 overflow-y-auto rounded-lg border p-2">
           {attendanceDates.map((date) => (
             <button
               key={date}
               type="button"
-              onClick={() => setDateFilter(date)}
+              onClick={() => {
+                setDateFilter(date);
+                setNameSearch("");
+              }}
               className={`rounded-full border px-3 py-1 text-sm ${dateFilter === date
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card hover:bg-muted"
+                ? "bg-primary text-primary-foreground"
+                : "bg-card hover:bg-muted"
                 }`}
             >
               <span className="mr-1 inline-block h-2 w-2 rounded-full bg-blue-500" />
@@ -200,7 +221,50 @@ export default function AttendancePage() {
         </div>
       )}
 
-      {!records?.length ? (
+      {nameSearch.trim() ? (
+        searchedAttendance.length === 0 ? (
+          <div className="text-center py-16 text-muted-foreground">
+            <ClipboardList className="w-12 h-12 mx-auto mb-3 opacity-30" />
+            <p>{i.noAttendance}</p>
+          </div>
+        ) : (
+          <div className="bg-card rounded-xl overflow-hidden name-tag-shadow">
+            <div className="px-4 py-2 font-semibold border-b">
+              {i.searchResults} ({searchedAttendance.length})
+            </div>
+
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="text-left px-4 py-3 font-medium">{i.colName}</th>
+                  <th className="text-left px-4 py-3 font-medium">{i.colBirthDate}</th>
+                  <th className="text-left px-4 py-3 font-medium">{i.colDate}</th>
+                  <th className="text-left px-4 py-3 font-medium">{i.colTime}</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {[...searchedAttendance]
+                  .sort((a, b) => b.date.localeCompare(a.date) || b.time.localeCompare(a.time))
+                  .map((r) => {
+                    const member = members?.find((m) => String(m.id) === String(r.memberId));
+
+                    return (
+                      <tr key={r.id} className="border-b last:border-0">
+                        <td className="px-4 py-3 font-medium">{r.memberName}</td>
+                        <td className="px-4 py-3 text-muted-foreground">
+                          {member?.birthDate || "-"}
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground">{r.date}</td>
+                        <td className="px-4 py-3 text-muted-foreground">{r.time}</td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
+        )
+      ) : !records?.length ? (
         <div className="text-center py-16 text-muted-foreground">
           <ClipboardList className="w-12 h-12 mx-auto mb-3 opacity-30" />
           <p>{i.noAttendance}</p>
@@ -220,26 +284,29 @@ export default function AttendancePage() {
             </thead>
 
             <tbody>
-              {records.map((r) => {
-                const member = members?.find((m) => String(m.id) === String(r.memberId));
+              {[...records]
+                .sort((a, b) => a.memberName.localeCompare(b.memberName))
+                .map((r) => {
+                  const member = members?.find((m) => String(m.id) === String(r.memberId));
 
-                return (
-                  <tr key={r.id} className="border-b last:border-0">
-                    <td className="px-4 py-3 font-medium">{r.memberName}</td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {member?.birthDate || '-'}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">{r.time}</td>
-                    <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
-                      {r.scannedData?.memberId || member?.memberId || r.memberId || '-'}
-                    </td>
-                  </tr>
-                );
-              })}
+                  return (
+                    <tr key={r.id} className="border-b last:border-0">
+                      <td className="px-4 py-3 font-medium">{r.memberName}</td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {member?.birthDate || "-"}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">{r.time}</td>
+                      <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
+                        {r.scannedData?.memberId || member?.memberId || r.memberId || "-"}
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </table>
         </div>
       )}
+
     </div>
   );
 }

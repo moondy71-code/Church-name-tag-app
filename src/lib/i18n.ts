@@ -154,6 +154,9 @@ export interface Translations {
   googleBackup: string;
   googleImport: string;
   importResult: string;
+  searchAttendanceByName: string;
+  searchResults: string;
+  colDate: string;
 
 };
 
@@ -311,6 +314,9 @@ const ko: Translations = {
   googleBackup: "Google Drive로 저장",
   googleImport: "Google Drive에서 불러오기",
   importResult: "가져오기 완료: 새 교인 {{newMembers}}명, 업데이트 {{updatedMembers}}명, 새 출석 {{newAttendance}}개",
+  searchAttendanceByName: "이름으로 출석 기록 찾기",
+  searchResults: "검색 결과",
+  colDate: "날짜",
 
 };
 
@@ -468,7 +474,9 @@ const en: Translations = {
   googleBackup: "Save to Google Drive",
   googleImport: "Load from Google Drive",
   importResult: "Import complete: {{newMembers}} new members, {{updatedMembers}} updated, {{newAttendance}} new attendance",
-
+  searchAttendanceByName: "Search attendance by name",
+  searchResults: "Search Results",
+  colDate: "Date",
 };
 
 const translations: Record<Lang, Translations> = { ko, en };
