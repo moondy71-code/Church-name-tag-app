@@ -44,6 +44,7 @@ export default function AttendancePage() {
         [i.excelDate]: r.date,
         [i.excelTime]: r.time,
         [i.excelMemberId]: r.scannedData?.memberId || member?.memberId || r.memberId || '',
+        [i.excelGroup]: member?.group || '',
       };
     });
 
