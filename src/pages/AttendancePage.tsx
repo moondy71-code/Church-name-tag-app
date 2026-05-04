@@ -19,6 +19,12 @@ export default function AttendancePage() {
 
   const members = useLiveQuery(() => db.members.toArray(), []);
 
+  const allAttendance = useLiveQuery(() => db.attendance.toArray(), []);
+
+  const attendanceDates = Array.from(
+    new Set((allAttendance || []).map((r) => r.date))
+  ).sort((a, b) => b.localeCompare(a));
+
   const exportToExcel = () => {
     if (!records?.length) return;
 
@@ -174,6 +180,25 @@ export default function AttendancePage() {
           {i.attendanceCount(records?.length || 0)}
         </span>
       </div>
+
+      {attendanceDates.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {attendanceDates.map((date) => (
+            <button
+              key={date}
+              type="button"
+              onClick={() => setDateFilter(date)}
+              className={`rounded-full border px-3 py-1 text-sm ${dateFilter === date
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card hover:bg-muted"
+                }`}
+            >
+              <span className="mr-1 inline-block h-2 w-2 rounded-full bg-blue-500" />
+              {date}
+            </button>
+          ))}
+        </div>
+      )}
 
       {!records?.length ? (
         <div className="text-center py-16 text-muted-foreground">
